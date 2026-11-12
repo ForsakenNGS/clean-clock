@@ -51,6 +51,21 @@ The following configuration options should be available:
   - Font ("EBGaramond" or "LECO 1976")
     - Emery uses `EB_GARAMOND_120` / `LECO_120`
     - Aplite, basalt, diorite, flint uses `EB_GARAMOND_80` / `LECO_80`
+- Weather elements
+  - Update interval in hours (1-24)
+  - Location to be used (empty = as provided by pebble app)
+- Top bar
+  - Primary color
+  - Secondary color
+  - Left element (As defined above or none)
+  - Center element (As defined above or none)
+  - Right element (As defined above or none)
+- Bottom bar
+  - Primary color
+  - Secondary color
+  - Left element (As defined above or none)
+  - Center element (As defined above or none)
+  - Right element (As defined above or none)
 
 The files for the server-side configuration page is in the projects `config-page` directory.
 

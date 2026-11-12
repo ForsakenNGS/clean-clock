@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clean Clock Configuration</title>
+  <style>
+    body { font-family: sans-serif; margin: 16px; background: #111; color: #eee; }
+    h1,h2 { margin: 0.6em 0 0.3em; }
+    fieldset { border: 1px solid #444; margin: 12px 0; padding: 10px; }
+    label { display:block; margin: 8px 0 4px; }
+    select,input { width: 100%; padding: 8px; box-sizing: border-box; }
+    .row { display:flex; gap:8px; }
+    .row > div { flex:1; }
+    button { width:100%; padding:12px; margin-top:16px; font-size:16px; }
+  </style>
+</head>
+<body>
+  <h1>Clean Clock</h1>
+  <form id="cfg">
+    <fieldset>
+      <legend>General</legend>
+      <label>Time format
+        <select name="TIME_FORMAT">
+          <option value="24">24 hours</option>
+          <option value="12">12 hours</option>
+        </select>
+      </label>
+      <label>Temperature unit
+        <select name="TEMP_UNIT">
+          <option value="C">Celsius</option>
+          <option value="F">Fahrenheit</option>
+        </select>
+      </label>
+      <label>Language
+        <select name="LANGUAGE">
+          <option value="">Watch default</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Time element</legend>
+      <label>Font
+        <select name="TIME_FONT">
+          <option value="LECO">LECO 1976</option>
+          <option value="EBG">EB Garamond</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Weather</legend>
+      <label>Update interval (hours)
+        <input type="number" name="WEATHER_INTERVAL" min="1" max="24" step="1" value="1">
+      </label>
+      <label>Location (empty = Pebble app)
+        <input type="text" name="WEATHER_LOCATION" placeholder="e.g. Berlin,DE">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Top bar</legend>
+      <div class="row">
+        <div><label>Primary<input type="color" name="TOP_PRIMARY_COLOR" value="#ffffff"></label></div>
+        <div><label>Secondary<input type="color" name="TOP_SECONDARY_COLOR" value="#000000"></label></div>
+      </div>
+      <label>Left element<select name="TOP_LEFT_ELEMENT"></select></label>
+      <label>Center element<select name="TOP_CENTER_ELEMENT"></select></label>
+      <label>Right element<select name="TOP_RIGHT_ELEMENT"></select></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Bottom bar</legend>
+      <div class="row">
+        <div><label>Primary<input type="color" name="BOTTOM_PRIMARY_COLOR" value="#ffffff"></label></div>
+        <div><label>Secondary<input type="color" name="BOTTOM_SECONDARY_COLOR" value="#000000"></label></div>
+      </div>
+      <label>Left element<select name="BOTTOM_LEFT_ELEMENT"></select></label>
+      <label>Center element<select name="BOTTOM_CENTER_ELEMENT"></select></label>
+      <label>Right element<select name="BOTTOM_RIGHT_ELEMENT"></select></label>
+    </fieldset>
+
+    <button type="submit">Save</button>
+  </form>
+
+  <script>
+    const BAR_ELEMENTS = [
+      ['0','None'],
+      // Time-/Date elements
+      ['1','Day of Month'],
+      ['2','Weekday'],
+      ['3','Month'],
+      ['4','Week of Year'],
+      ['5','Seconds'],
+      // Weather elements
+      ['11','Current weather (icon+temp)'],
+      ['12','Today min/max'],
+      ['13','Tomorrow forecast (icon+temp)'],
+      ['14','Tomorrow min/max'],
+      // Watch information / sensors
+      ['21','Battery %'],
+      ['22','Heart rate']
+    ];
+    const CONFIG_ELEMENTS = [
+      'TOP_LEFT_ELEMENT',
+      'TOP_CENTER_ELEMENT',
+      'TOP_RIGHT_ELEMENT',
+      'BOTTOM_LEFT_ELEMENT',
+      'BOTTOM_CENTER_ELEMENT',
+      'BOTTOM_RIGHT_ELEMENT'
+    ];
+    const defaults = {
+      TIME_FORMAT: "24",
+      TEMP_UNIT: "0",
+      LANGUAGE: "",
+      TIME_FONT: "LECO",
+      WEATHER_INTERVAL: 4,
+      WEATHER_LOCATION: "",
+      TOP_PRIMARY_COLOR: 0xFFFFFF,
+      TOP_SECONDARY_COLOR: 0x000000,
+      TOP_LEFT_ELEMENT: 2,
+      TOP_CENTER_ELEMENT: 1,
+      TOP_RIGHT_ELEMENT: 3,
+      BOTTOM_PRIMARY_COLOR: 0xFFFFFF,
+      BOTTOM_SECONDARY_COLOR: 0x000000,
+      BOTTOM_LEFT_ELEMENT: 11,
+      BOTTOM_CENTER_ELEMENT: 21,
+      BOTTOM_RIGHT_ELEMENT: 13
+    };
+
+
+    function fillElements(sel) {
+      BAR_ELEMENTS.forEach(([value, label])=>{
+        const o = document.createElement('option');
+        o.value = value;
+        o.textContent = label;
+        sel.appendChild(o);
+      });
+    }
+    function hexToInt(hex) {
+      return parseInt(hex.replace('#',''),16);
+    }
+    function intToHex(n){
+      return '#' + ('000000' + (Number(n)||0).toString(16)).slice(-6);
+    }
+    
+    CONFIG_ELEMENTS.forEach(name => fillElements(document.querySelector(`[name="${name}"]`)));
+
+    const params = new URLSearchParams(location.search);
+    let settings = {};
+    try {
+      // parse settings from query string
+      settings = JSON.parse(params.get('settings') || '{}');
+    } catch(e) {
+      // use defaults if parsing fails
+      settings = {};
+    }
+    settings = Object.assign({}, defaults, settings);
+
+    const form = document.getElementById('cfg');
+    for (const [k,v] of Object.entries(settings)) {
+      const el = form.elements[k];
+      if (!el) continue;
+      if (el.type === 'color') el.value = intToHex(v);
+      else el.value = v;
+    }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const out = {};
+      for (const el of form.elements) {
+        if (!el.name) continue;
+        if (el.type === 'color') {
+          // Convert colors to hex
+          out[el.name] = hexToInt(el.value);
+        } else if (el.type === 'number') {
+          // Parse numbers as integers
+          out[el.name] = parseInt(el.value);
+        } else {
+          // Return everything else as string
+          out[el.name] = el.value;
+        }
+      }
+      const ret = encodeURIComponent(JSON.stringify(out));
+      document.location = 'pebblejs://close#' + ret;
+    });
+  </script>
+</body>
+</html>

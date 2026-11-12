@@ -1,0 +1,58 @@
+{
+  "name": "clean-clock",
+  "author": "MakeAwesomeHappen",
+  "version": "1.0.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "clean-clock",
+    "uuid": "9d6451e5-8e00-4bf5-b8a1-5e223f6c610b",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "diorite",
+      "emery",
+      "flint"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
+    "capabilities": [
+      "configurable"
+    ],
+    "messageKeys": [
+      "dunny"
+    ],
+    "resources": {
+      "media": [
+        {
+          "type": "font",
+          "name": "EB_GARAMOND_120",
+          "file": "fonts/EBGaramond.ttf",
+          "characterRegex": "[:0-9]"
+        },
+        {
+          "type": "font",
+          "name": "EB_GARAMOND_80",
+          "file": "fonts/EBGaramond.ttf",
+          "characterRegex": "[:0-9]"
+        },
+        {
+          "type": "font",
+          "name": "LECO_120",
+          "file": "fonts/LECO 1976 Regular.ttf",
+          "characterRegex": "[:0-9]"
+        },
+        {
+          "type": "font",
+          "name": "LECO_80",
+          "file": "fonts/LECO 1976 Regular.ttf",
+          "characterRegex": "[:0-9]"
+        }
+      ]
+    }
+  }
+}

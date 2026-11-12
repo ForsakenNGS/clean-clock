@@ -1,0 +1,35 @@
+{
+  "configurations": [
+    {
+      "name": "Pebble (Emery)",
+      "includePath": [
+        "${workspaceFolder}/src/**",
+        "${workspaceFolder}/build/include",
+        "${workspaceFolder}/build/emery",
+        "${env:HOME}/.local/share/pebble-sdk/SDKs/current/sdk-core/pebble/emery/include"
+      ],
+      "defines": [
+        "PBL_PLATFORM_EMERY",
+        "PBL_COLOR",
+        "PBL_RECT",
+        "PBL_MICROPHONE",
+        "PBL_SMARTSTRAP",
+        "PBL_HEALTH",
+        "PBL_COMPASS",
+        "PBL_DISPLAY_WIDTH=200",
+        "PBL_DISPLAY_HEIGHT=228",
+        "SDK_VERSION_MAJOR=4",
+        "SDK_VERSION_MINOR=3",
+        "__arm__"
+      ],
+      "compilerPath": "${env:HOME}/.local/share/pebble-sdk/SDKs/current/toolchain/arm-none-eabi/bin/arm-none-eabi-gcc",
+      "compilerArgs": [
+        "-mcpu=cortex-m4",
+        "-mthumb"
+      ],
+      "cStandard": "c11",
+      "intelliSenseMode": "linux-gcc-arm"
+    }
+  ],
+  "version": 4
+}

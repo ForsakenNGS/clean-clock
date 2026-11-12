@@ -77,6 +77,7 @@ The implementation of distinct elements should be modularized.
 
 - The display should update as little as possible.
 - The time segment should only update once a minute when the time actually changes
+  - Due to font/glyph size limitations rendering the time segment should be done using the pebble-fctx library
 - The top and bottom bars should only do partial updates depending on the configured elements
   - The update interval for weather elements should be configurable by the user as a whole number of hours
   - If a weather update is triggered all relevant elements should be updated in a single cycle

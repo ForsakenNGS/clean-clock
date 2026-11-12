@@ -9,10 +9,10 @@ static WeatherData s_weather;
 static void prv_default_settings(void) {
   s_settings.time_format = TIME_FORMAT_24H;
   s_settings.temp_unit = TEMP_UNIT_C;
-  strcpy(s_settings.language, "", sizeof(s_settings.language));
+  strncpy(s_settings.language, "", sizeof(s_settings.language));
   s_settings.time_font = TIME_FONT_GARAMOND;
   s_settings.weather_interval_hours = 1;
-  strcpy(s_settings.weather_location, "", sizeof(s_settings.weather_location));
+  strncpy(s_settings.weather_location, "", sizeof(s_settings.weather_location));
 
   s_settings.top_primary_color = 0xFFFFFF;
   s_settings.top_secondary_color = 0x000000;

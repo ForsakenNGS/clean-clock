@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Convert TTF fonts to SVG font format for pebble-fctx-compiler.
+"""Convert TTF fonts to compiled pebble-fctx .ffont resources.
+
+This is a one-step generator: for each TTF in fonts/ it:
+  1. builds an intermediate SVG font description into build/fonts-svg/,
+  2. runs pebble-fctx-compiler to produce a compiled .ffont into resources/.
 
 Usage:
     python3 scripts/ttf_to_svg_font.py
 
-This produces an SVG font file per TTF in fonts/ into build/fonts-svg/.
-Compile each SVG with:
-    ./node_modules/.bin/fctx-compiler <svg file>
-which writes a .ffont binary into resources/ for use with pebble-fctx.
+The compiled .ffont files are consumed at runtime via ffont_create_from_resource()
+in src/c/clean-clock.c and declared as raw resources in package.json.
 """
 import os
+import subprocess
 import sys
 
 # Ensure fontTools is importable when run from any cwd.
@@ -23,15 +26,25 @@ except ImportError:
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONTS_DIR = os.path.join(PROJECT_ROOT, "fonts")
 SVG_OUT_DIR = os.path.join(PROJECT_ROOT, "build", "fonts-svg")
+RESOURCES_DIR = os.path.join(PROJECT_ROOT, "resources")
+
+FCTX_COMPILER = os.path.join(PROJECT_ROOT, "node_modules", ".bin", "fctx-compiler")
 
 # Characters needed for the digital time display.
 CHARS = "0123456789:"
 
-# TTF source -> (svg output, font id used in <font id="...">)
+# TTF source -> (font id used in <font id="...">)
+# Add new fonts here; the output resource basename is derived from the ttf name.
 FONT_SOURCES = [
+    ("Teko-Light.ttf", "Teko"),
     ("EBGaramond.ttf", "EBGaramond"),
     ("LECO 1976 Regular.ttf", "LECO1976"),
 ]
+
+
+def svg_name(ttf_name):
+    """Derive the intermediate SVG file basename from a ttf file name."""
+    return os.path.splitext(ttf_name)[0].replace(" ", "").replace("'", "") + ".svg"
 
 
 def build_svg_font(ttf_path, svg_path, font_id):
@@ -90,22 +103,45 @@ def build_svg_font(ttf_path, svg_path, font_id):
     print("Wrote %s" % svg_path)
 
 
+def compile_svg(svg_path):
+    """Run pebble-fctx-compiler on an SVG, writing a .ffont into resources/."""
+    if not os.path.exists(FCTX_COMPILER):
+        print("ERROR: fctx-compiler not found at %s" % FCTX_COMPILER, file=sys.stderr)
+        print("Install it: npm install pebble-fctx-compiler", file=sys.stderr)
+        return False
+    os.makedirs(RESOURCES_DIR, exist_ok=True)
+    cmd = [FCTX_COMPILER, svg_path]
+    print("Running: %s" % " ".join(cmd))
+    result = subprocess.run(cmd, cwd=PROJECT_ROOT)
+    if result.returncode != 0:
+        print("ERROR: fctx-compiler failed for %s (exit %d)" % (svg_path, result.returncode), file=sys.stderr)
+        return False
+    return True
+
+
 def main():
+    if not os.path.isdir(FONTS_DIR):
+        print("ERROR: fonts directory not found: %s" % FONTS_DIR, file=sys.stderr)
+        sys.exit(1)
+
     os.makedirs(SVG_OUT_DIR, exist_ok=True)
+
+    any_failed = False
     for ttf_name, font_id in FONT_SOURCES:
         ttf_path = os.path.join(FONTS_DIR, ttf_name)
         if not os.path.exists(ttf_path):
             print("WARNING: not found, skipping: %s" % ttf_path, file=sys.stderr)
             continue
-        base = os.path.splitext(ttf_name)[0].replace(" ", "").replace("'", "")
-        svg_path = os.path.join(SVG_OUT_DIR, base + ".svg")
+        svg_path = os.path.join(SVG_OUT_DIR, svg_name(ttf_name))
         build_svg_font(ttf_path, svg_path, font_id)
+        if not compile_svg(svg_path):
+            any_failed = True
 
     print()
-    print("Next: compile each SVG with pebble-fctx-compiler into resources/:")
-    print("  ./node_modules/.bin/fctx-compiler build/fonts-svg/EBGaramond.svg")
-    print("  ./node_modules/.bin/fctx-compiler build/fonts-svg/LECO1976.svg")
-    print("This writes resources/EBGaramond.ffont and resources/LECO1976.ffont.")
+    if any_failed:
+        print("One or more fonts failed to compile.", file=sys.stderr)
+        sys.exit(1)
+    print("Done. Compiled .ffont resources are in %s" % RESOURCES_DIR)
 
 
 if __name__ == "__main__":

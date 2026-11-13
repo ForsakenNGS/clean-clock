@@ -7,7 +7,7 @@
   ],
   "private": true,
   "scripts": {
-    "gen-fonts": "python3 scripts/ttf_to_svg_font.py && ./node_modules/.bin/fctx-compiler build/fonts-svg/EBGaramond.svg && ./node_modules/.bin/fctx-compiler build/fonts-svg/LECO1976Regular.svg"
+    "gen-fonts": "python3 scripts/ttf_to_svg_font.py"
   },
   "dependencies": {
     "pebble-fctx": "^1.6.5",

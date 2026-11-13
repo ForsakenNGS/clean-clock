@@ -109,8 +109,10 @@ void settings_handle_inbox(DictionaryIterator *iter, void *context) {
   if (t) {
     if (strcmp(t->value->cstring, "EBG") == 0) {
       s_settings.time_font = TIME_FONT_GARAMOND;
-    } else {
+    } else if (strcmp(t->value->cstring, "LECO") == 0) {
       s_settings.time_font = TIME_FONT_LECO;
+    } else {
+      s_settings.time_font = TIME_FONT_TEKO;
     }
     config_changed = true;
   }

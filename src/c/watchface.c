@@ -182,18 +182,30 @@ int16_t watchface_time_font_size(void) {
 #if defined(PBL_PLATFORM_EMERY)
   switch (s_watchface.time_font) {
     default:
+    case TIME_FONT_TEKO:
+      return 132;
     case TIME_FONT_LECO:
-      return 72;
     case TIME_FONT_GARAMOND:
       return 72;
   }
 #else
   switch (s_watchface.time_font) {
     default:
+    case TIME_FONT_TEKO:
+      return 64;
     case TIME_FONT_LECO:
-      return 48;
     case TIME_FONT_GARAMOND:
       return 48;
   }
 #endif
+}
+
+int16_t watchface_time_font_offset(void) {
+  switch (s_watchface.time_font) {
+    default:
+    case TIME_FONT_TEKO:
+    case TIME_FONT_LECO:
+    case TIME_FONT_GARAMOND:
+      return watchface_bar_height() + (watchface_time_height() - watchface_time_font_size()) / 2;
+  }
 }

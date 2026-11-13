@@ -12,8 +12,9 @@ typedef enum {
 } TempUnit;
 
 typedef enum {
-  TIME_FONT_LECO = 0,
-  TIME_FONT_GARAMOND = 1,
+  TIME_FONT_TEKO = 0,
+  TIME_FONT_LECO = 1,
+  TIME_FONT_GARAMOND = 2,
 } TimeFont;
 
 typedef enum {

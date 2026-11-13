@@ -9,7 +9,7 @@ static void time_update_layer(Layer *layer, GContext *ctx) {
 
   GRect bounds = layer_get_bounds(layer);
   int16_t font_size = watchface_time_font_size();
-  int16_t font_offset = watchface_bar_height() + (watchface_time_height() - font_size) / 2;
+  int16_t font_offset = watchface_time_font_offset();
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
   
@@ -44,8 +44,10 @@ void time_load_settings(TimeSection *section, const GColor color_primary, const 
   section->data->color_secondary = color_secondary;
   if (font == TIME_FONT_GARAMOND) {
     time_load_font(section, RESOURCE_ID_EB_GARAMOND);
-  } else {
+  } else if (font == TIME_FONT_LECO) {
     time_load_font(section, RESOURCE_ID_LECO_1976);
+  } else {
+    time_load_font(section, RESOURCE_ID_TEKO);
   }
 }
 

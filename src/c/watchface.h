@@ -30,3 +30,4 @@ GFont watchface_bar_font(void);
 int16_t watchface_bar_height(void);
 int16_t watchface_time_height(void);
 int16_t watchface_time_font_size(void);
+int16_t watchface_time_font_offset(void);

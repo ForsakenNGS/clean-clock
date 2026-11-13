@@ -71,6 +71,11 @@
           "file": "LECO1976.ffont",
           "name": "LECO_1976",
           "type": "raw"
+        },
+        {
+          "file": "Teko.ffont",
+          "name": "TEKO",
+          "type": "raw"
         }
       ]
     }

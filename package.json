@@ -2,9 +2,17 @@
   "name": "clean-clock",
   "author": "MakeAwesomeHappen",
   "version": "1.0.0",
-  "keywords": ["pebble-app"],
+  "keywords": [
+    "pebble-app"
+  ],
   "private": true,
-  "dependencies": {},
+  "scripts": {
+    "gen-fonts": "python3 scripts/ttf_to_svg_font.py && ./node_modules/.bin/fctx-compiler build/fonts-svg/EBGaramond.svg && ./node_modules/.bin/fctx-compiler build/fonts-svg/LECO1976Regular.svg"
+  },
+  "dependencies": {
+    "pebble-fctx": "^1.6.5",
+    "pebble-utf8": "^1.0.4"
+  },
   "pebble": {
     "displayName": "clean-clock",
     "uuid": "9d6451e5-8e00-4bf5-b8a1-5e223f6c610b",
@@ -21,38 +29,53 @@
       "watchface": true
     },
     "capabilities": [
-      "configurable"
+      "configurable",
+      "health",
+      "location"
     ],
     "messageKeys": [
-      "dunny"
+      "TIME_FORMAT",
+      "TEMP_UNIT",
+      "LANGUAGE",
+      "TIME_FONT",
+      "WEATHER_INTERVAL",
+      "WEATHER_LOCATION",
+      "TOP_PRIMARY_COLOR",
+      "TOP_SECONDARY_COLOR",
+      "TOP_LEFT_ELEMENT",
+      "TOP_CENTER_ELEMENT",
+      "TOP_RIGHT_ELEMENT",
+      "BOTTOM_PRIMARY_COLOR",
+      "BOTTOM_SECONDARY_COLOR",
+      "BOTTOM_LEFT_ELEMENT",
+      "BOTTOM_CENTER_ELEMENT",
+      "BOTTOM_RIGHT_ELEMENT",
+      "WEATHER_TEMP",
+      "WEATHER_ICON",
+      "WEATHER_TODAY_MIN",
+      "WEATHER_TODAY_MAX",
+      "WEATHER_TOMORROW_TEMP",
+      "WEATHER_TOMORROW_ICON",
+      "WEATHER_TOMORROW_MIN",
+      "WEATHER_TOMORROW_MAX",
+      "READY"
     ],
     "resources": {
       "media": [
         {
-          "type": "font",
-          "name": "EB_GARAMOND_120",
-          "file": "fonts/EBGaramond.ttf",
-          "characterRegex": "[:0-9]"
+          "file": "EBGaramond.ffont",
+          "name": "EB_GARAMOND",
+          "type": "raw"
         },
         {
-          "type": "font",
-          "name": "EB_GARAMOND_80",
-          "file": "fonts/EBGaramond.ttf",
-          "characterRegex": "[:0-9]"
-        },
-        {
-          "type": "font",
-          "name": "LECO_120",
-          "file": "fonts/LECO 1976 Regular.ttf",
-          "characterRegex": "[:0-9]"
-        },
-        {
-          "type": "font",
-          "name": "LECO_80",
-          "file": "fonts/LECO 1976 Regular.ttf",
-          "characterRegex": "[:0-9]"
+          "file": "LECO1976.ffont",
+          "name": "LECO_1976",
+          "type": "raw"
         }
       ]
     }
+  },
+  "devDependencies": {
+    "pebble-fctx-compiler": "^1.2.2"
   }
 }

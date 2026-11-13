@@ -1,4 +1,5 @@
 #include "time.h"
+#include "text.h"
 #include "watchface.h"
 
 static char time_temp[8];
@@ -8,25 +9,14 @@ static void time_update_layer(Layer *layer, GContext *ctx) {
   if (!d->font) return;
 
   GRect bounds = layer_get_bounds(layer);
-  int16_t font_size = watchface_time_font_size();
-  int16_t font_offset = watchface_time_font_offset();
-  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_context_set_fill_color(ctx, d->color_secondary);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-  
-  FContext fctx;
-  fctx_init_context(&fctx, ctx);
-  fctx_set_fill_color(&fctx, GColorWhite);
-  fctx_set_text_em_height(&fctx, d->font, font_size);
-  fctx_set_offset(&fctx, FPointI(bounds.size.w / 2, font_offset));
-  fctx_begin_fill(&fctx);
-  fctx_draw_string(&fctx, d->buffer, d->font, GTextAlignmentCenter, FTextAnchorTop);
-  fctx_end_fill(&fctx);
-  fctx_deinit_context(&fctx);
+  GRect text_bounds = GRect(4, watchface_bar_height() + 2, bounds.size.w - 8, bounds.size.h - 4);
+  text_render_fit(ctx, text_bounds, d->buffer, d->font, d->color_primary, GTextAlignmentCenter);
 }
 
-void time_load(TimeSection *section, Layer *root_layer) {
+void time_load(TimeSection *section, Layer *root_layer, const GColor color_primary, const GColor color_secondary, const TimeFont font) {
   GRect bounds = layer_get_bounds(root_layer);
-  ClaySettings *s = settings_get();
   // Create time segment
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Time rect: (%d, %d, %d, %d)", 0, watchface_bar_height(), bounds.size.w, watchface_time_height());
   section->layer = layer_create_with_data(
@@ -34,7 +24,7 @@ void time_load(TimeSection *section, Layer *root_layer) {
     sizeof(TimeSectionData)
   );
   section->data = (TimeSectionData*)layer_get_data(section->layer);
-  time_load_settings(section, GColorBlack, GColorWhite, s->time_font);
+  time_load_settings(section, color_primary, color_secondary, font);
   layer_set_update_proc(section->layer, time_update_layer);
   layer_add_child(root_layer, section->layer);
 }

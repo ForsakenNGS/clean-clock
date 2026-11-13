@@ -16,7 +16,7 @@ typedef struct {
   TimeSectionData *data;
 } TimeSection;
 
-void time_load(TimeSection *section, Layer *root_layer);
+void time_load(TimeSection *section, Layer *root_layer, const GColor color_primary, const GColor color_secondary, const TimeFont font);
 void time_load_settings(TimeSection *section, const GColor color_primary, const GColor color_secondary, const TimeFont font);
 void time_load_font(TimeSection *section, const uint32_t resource_id);
 void time_unload(TimeSection *section);

@@ -11,6 +11,14 @@ GColor watchface_color(int32_t v) {
 #endif
 }
 
+static fixed_t fctx_scale_x(FContext *fctx, fixed_t units) {
+  return units * fctx->transform_scale_to.x / fctx->transform_scale_from.x;
+}
+
+static fixed_t fctx_scale_y(FContext *fctx, fixed_t units) {
+  return units * fctx->transform_scale_to.x / fctx->transform_scale_from.x;
+}
+
 static void watchface_inbox_received(DictionaryIterator *iter, void *context) {
   settings_handle_inbox(iter, context);
   watchface_refresh();
@@ -53,13 +61,14 @@ void watchface_load(Window *window) {
   ClaySettings *s = settings_get();
   s_watchface.root_layer = window_get_root_layer(window);
   s_watchface.time_font = s->time_font;
+  s_watchface.time_font = TIME_FONT_TEKO;
 #if defined(PBL_PLATFORM_EMERY)
   s_watchface.bar_font = fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK);
 #else
   s_watchface.bar_font = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
 #endif
   bar_load(&s_watchface.top, s_watchface.root_layer, BAR_LOCATION_TOP);
-  time_load(&s_watchface.time, s_watchface.root_layer);
+  time_load(&s_watchface.time, s_watchface.root_layer, GColorWhite, GColorBlack, s_watchface.time_font);
   bar_load(&s_watchface.bottom, s_watchface.root_layer, BAR_LOCATION_BOTTOM);
   window_set_background_color(window, s_watchface.time.data->color_secondary);
   watchface_refresh();
@@ -176,36 +185,4 @@ int16_t watchface_time_height(void) {
 #else
   return 96;
 #endif
-}
-
-int16_t watchface_time_font_size(void) {
-#if defined(PBL_PLATFORM_EMERY)
-  switch (s_watchface.time_font) {
-    default:
-    case TIME_FONT_TEKO:
-      return 132;
-    case TIME_FONT_LECO:
-    case TIME_FONT_GARAMOND:
-      return 72;
-  }
-#else
-  switch (s_watchface.time_font) {
-    default:
-    case TIME_FONT_TEKO:
-      return 64;
-    case TIME_FONT_LECO:
-    case TIME_FONT_GARAMOND:
-      return 48;
-  }
-#endif
-}
-
-int16_t watchface_time_font_offset(void) {
-  switch (s_watchface.time_font) {
-    default:
-    case TIME_FONT_TEKO:
-    case TIME_FONT_LECO:
-    case TIME_FONT_GARAMOND:
-      return watchface_bar_height() + (watchface_time_height() - watchface_time_font_size()) / 2;
-  }
 }

@@ -4,7 +4,7 @@
 
 The watchface consists on 3 parts:
 - Top bar
-  - Can contain up to 3 elements (left, center, right), which are configurable
+  - Can contain up to 3 widgets (left, center, right), which are configurable
   - Default height is 48px (emery) or 36px (aplite, basalt, diorite, flint)
   - Configurable via primary and secondary color (by default primary = text/icon, secondary = background)
 - Time element
@@ -12,18 +12,18 @@ The watchface consists on 3 parts:
   - Default height is 132px (emery) or 96px (aplite, basalt, diorite, flint)
   - Configurable via primary and secondary color (primary = text, secondary = background)
 - Bottom bar
-  - Can contain up to 3 elements (left, center, right), which are configurable
+  - Can contain up to 3 widgets (left, center, right), which are configurable
   - Default height is 48px (emery) or 36px (aplite, basalt, diorite, flint)
   - Configurable via primary and secondary color (by default primary = text/icon, secondary = background)
 
-For the top- and bottom-bar the following elements should be available:
-- Time-/Date-Elements
+For the top- and bottom-bar the following widgets should be available:
+- Time-/Date-Widgets
   - Day of Month
   - Weekday
   - Month
   - Week of Year
   - Seconds
-- Weather elements
+- Weather widgets
   - Current weather as icon (sunny, rain, etc.) + temperature
   - Todays temperature min/max
   - Tomorrows forecast as icon (sunny, rain, etc.) + temperature
@@ -34,11 +34,11 @@ For the top- and bottom-bar the following elements should be available:
 
 ### Layout for top/bottom bar
 
-- The left element will be aligned left, taking the available space to it's right.
-- The center element is always perfectly center. The width is defined by the element that is assigned.
-- The right element will be aligned right, taking the available space to it's left.
-- If there's no center element the side elements will split the available width 50/50
-- If there's only a single element it will take the full width
+- The left widget will be aligned left, taking the available space to it's right.
+- The center widget is always perfectly center. The width is defined by the widget that is assigned.
+- The right widget will be aligned right, taking the available space to it's left.
+- If there's no center widget the side widgets will split the available width 50/50
+- If there's only a single widget it will take the full width
 
 ## Configuration
 
@@ -47,25 +47,25 @@ The following configuration options should be available:
   - Time format (12 or 24 hours)
   - Temperature unit (celsius or fahrenheit)
   - Language (by default as configured in the watch)
-- Time element
+- Time section
   - Font ("EBGaramond" or "LECO 1976")
     - Emery uses `EB_GARAMOND_120` / `LECO_120`
     - Aplite, basalt, diorite, flint uses `EB_GARAMOND_80` / `LECO_80`
-- Weather elements
+- Weather widgets
   - Update interval in hours (1-24)
   - Location to be used (empty = as provided by pebble app)
 - Top bar
   - Primary color
   - Secondary color
-  - Left element (As defined above or none)
-  - Center element (As defined above or none)
-  - Right element (As defined above or none)
+  - Left widget (As defined above or none)
+  - Center widget (As defined above or none)
+  - Right widget (As defined above or none)
 - Bottom bar
   - Primary color
   - Secondary color
-  - Left element (As defined above or none)
-  - Center element (As defined above or none)
-  - Right element (As defined above or none)
+  - Left widget (As defined above or none)
+  - Center widget (As defined above or none)
+  - Right widget (As defined above or none)
 
 The files for the server-side configuration page is in the projects `config-page` directory.
 
@@ -78,11 +78,11 @@ The implementation of distinct elements should be modularized.
 - The display should update as little as possible.
 - The time segment should only update once a minute when the time actually changes
   - Due to font/glyph size limitations rendering the time segment should be done using the pebble-fctx library
-- The top and bottom bars should only do partial updates depending on the configured elements
-  - The update interval for weather elements should be configurable by the user as a whole number of hours
-  - If a weather update is triggered all relevant elements should be updated in a single cycle
+- The top and bottom bars should only do partial updates depending on the configured widgets
+  - The update interval for weather widgets should be configurable by the user as a whole number of hours
+  - If a weather update is triggered all relevant widgets should be updated in a single cycle
   - Watch information / sensors should update based on according events from the SDK
     - Redraws should only happen if the value actually changed (e.g. if the SDK reports the same battery value twice, this should not trigger a redraw)
-  - For Time-/Date-Elements there should be different update cycles with all elements sharing the same interval being updated in a single cycle
-    - All date elements are updated once every 24 hours when the day changes
-    - The seconds element should update every second
+  - For Time-/Date-Widgets there should be different update cycles with all widgets sharing the same interval being updated in a single cycle
+    - All date widgets are updated once every 24 hours when the day changes
+    - The seconds widget should update every second

@@ -63,13 +63,13 @@
     "resources": {
       "media": [
         {
-          "file": "EBGaramond.ffont",
-          "name": "EB_GARAMOND",
+          "file": "Barlow.ffont",
+          "name": "BARLOW",
           "type": "raw"
         },
         {
-          "file": "LECO1976.ffont",
-          "name": "LECO_1976",
+          "file": "BebasNeue.ffont",
+          "name": "BEBAS",
           "type": "raw"
         },
         {

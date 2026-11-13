@@ -13,8 +13,8 @@ typedef enum {
 
 typedef enum {
   TIME_FONT_TEKO = 0,
-  TIME_FONT_LECO = 1,
-  TIME_FONT_GARAMOND = 2,
+  TIME_FONT_BARLOW = 1,
+  TIME_FONT_BEBAS = 2,
 } TimeFont;
 
 typedef enum {

@@ -61,7 +61,6 @@ void watchface_load(Window *window) {
   ClaySettings *s = settings_get();
   s_watchface.root_layer = window_get_root_layer(window);
   s_watchface.time_font = s->time_font;
-  s_watchface.time_font = TIME_FONT_TEKO;
 #if defined(PBL_PLATFORM_EMERY)
   s_watchface.bar_font = fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK);
 #else

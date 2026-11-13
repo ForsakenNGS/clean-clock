@@ -32,10 +32,10 @@ void time_load(TimeSection *section, Layer *root_layer, const GColor color_prima
 void time_load_settings(TimeSection *section, const GColor color_primary, const GColor color_secondary, const TimeFont font) {
   section->data->color_primary = color_primary;
   section->data->color_secondary = color_secondary;
-  if (font == TIME_FONT_GARAMOND) {
-    time_load_font(section, RESOURCE_ID_EB_GARAMOND);
-  } else if (font == TIME_FONT_LECO) {
-    time_load_font(section, RESOURCE_ID_LECO_1976);
+  if (font == TIME_FONT_BEBAS) {
+    time_load_font(section, RESOURCE_ID_BEBAS);
+  } else if (font == TIME_FONT_BARLOW) {
+    time_load_font(section, RESOURCE_ID_BARLOW);
   } else {
     time_load_font(section, RESOURCE_ID_TEKO);
   }

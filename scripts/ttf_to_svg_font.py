@@ -37,8 +37,8 @@ CHARS = "0123456789:"
 # Add new fonts here; the output resource basename is derived from the ttf name.
 FONT_SOURCES = [
     ("Teko-Light.ttf", "Teko"),
-    ("EBGaramond.ttf", "EBGaramond"),
-    ("LECO 1976 Regular.ttf", "LECO1976"),
+    ("BarlowCondensed-Regular.ttf", "Barlow"),
+    ("BebasNeue-Regular.ttf", "BebasNeue"),
 ]
 
 

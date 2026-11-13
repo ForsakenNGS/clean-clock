@@ -10,7 +10,7 @@ static void prv_default_settings(void) {
   s_settings.time_format = TIME_FORMAT_24H;
   s_settings.temp_unit = TEMP_UNIT_C;
   strncpy(s_settings.language, "", sizeof(s_settings.language));
-  s_settings.time_font = TIME_FONT_GARAMOND;
+  s_settings.time_font = TIME_FONT_BEBAS;
   s_settings.weather_interval_hours = 1;
   strncpy(s_settings.weather_location, "", sizeof(s_settings.weather_location));
 
@@ -107,10 +107,10 @@ void settings_handle_inbox(DictionaryIterator *iter, void *context) {
   // Time font
   t = dict_find(iter, MESSAGE_KEY_TIME_FONT);
   if (t) {
-    if (strcmp(t->value->cstring, "EBG") == 0) {
-      s_settings.time_font = TIME_FONT_GARAMOND;
-    } else if (strcmp(t->value->cstring, "LECO") == 0) {
-      s_settings.time_font = TIME_FONT_LECO;
+    if (strcmp(t->value->cstring, "BEBAS") == 0) {
+      s_settings.time_font = TIME_FONT_BEBAS;
+    } else if (strcmp(t->value->cstring, "BARLOW") == 0) {
+      s_settings.time_font = TIME_FONT_BARLOW;
     } else {
       s_settings.time_font = TIME_FONT_TEKO;
     }

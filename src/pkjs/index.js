@@ -86,7 +86,7 @@ Pebble.addEventListener('appmessage', function(e) {
 
 Pebble.addEventListener('showConfiguration', function() {
   var settings = getSettings();
-  var url = 'https://example.com/config-page/?settings=' + encodeURIComponent(JSON.stringify(settings));
+  var url = 'https://clean-clock.godlike.biz/?settings=' + encodeURIComponent(JSON.stringify(settings));
   Pebble.openURL(url);
 });
 

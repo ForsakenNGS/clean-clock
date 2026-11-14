@@ -52,7 +52,7 @@ static void widget_update_layer(Layer *layer, GContext *ctx) {
     #if defined(PBL_PLATFORM_EMERY)
     const int16_t icon_size = 32;
     #else
-    const int16_t icon_size = 32;
+    const int16_t icon_size = 24;
     #endif
     GPoint icon_pos = GPoint((bounds.size.w - icon_size) / 2, (bounds.size.h - icon_size) / 2);
     switch (d->config.location) {
@@ -158,9 +158,9 @@ int16_t widget_get_padding_vertical(const WidgetConfig config) {
   }
 #else
   if (widget_has_small_font(config)) {
-      return 4;
+      return 10;
   } else {
-      return 2;
+      return 0;
   }
 #endif
 }

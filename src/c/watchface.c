@@ -11,17 +11,8 @@ GColor watchface_color(int32_t v) {
 #endif
 }
 
-static fixed_t fctx_scale_x(FContext *fctx, fixed_t units) {
-  return units * fctx->transform_scale_to.x / fctx->transform_scale_from.x;
-}
-
-static fixed_t fctx_scale_y(FContext *fctx, fixed_t units) {
-  return units * fctx->transform_scale_to.x / fctx->transform_scale_from.x;
-}
-
 static void watchface_inbox_received(DictionaryIterator *iter, void *context) {
   settings_handle_inbox(iter, context);
-  watchface_refresh();
 }
 
 static void watchface_inbox_dropped(AppMessageResult reason, void *context) {
@@ -71,6 +62,7 @@ void watchface_load(Window *window) {
   time_load(&s_watchface.time, s_watchface.root_layer, time_config(GColorWhite, GColorBlack, s->time_font));
   bar_load(&s_watchface.bottom, s_watchface.root_layer, BAR_LOCATION_BOTTOM, s->bottom);
   window_set_background_color(window, s_watchface.time.data->config.color_secondary);
+  watchface_apply_subscriptions();
   watchface_refresh();
 }
 
@@ -79,6 +71,7 @@ void watchface_load_settings(void) {
   bar_load_settings(&s_watchface.top, s->top);
   time_load_settings(&s_watchface.time, time_config(GColorWhite, GColorBlack, s->time_font));
   bar_load_settings(&s_watchface.bottom, s->bottom);
+  watchface_apply_subscriptions();
   watchface_refresh();
 }
 
@@ -126,7 +119,7 @@ static void watchface_update_time(struct tm *t, TimeUnits units_changed) {
   widget_update_time(&s_watchface.bottom.right, t, units_changed);
 }
 
-static void watchface_update_weather(void) {
+void watchface_update_weather(void) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Weather update");
   widget_update_weather(&s_watchface.top.left);
   widget_update_weather(&s_watchface.top.center);
@@ -153,6 +146,12 @@ bool watchface_has_element_of_type(const ElementType type) {
   } else {
     return false;
   }
+}
+
+void watchface_apply_subscriptions(void) {
+  watchface_apply_tick_subscription();
+  watchface_apply_battery_subscription();
+  watchface_apply_battery_subscription();
 }
 
 void watchface_apply_tick_subscription(void) {

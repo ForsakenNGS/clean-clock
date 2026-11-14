@@ -1,4 +1,5 @@
 #include "settings.h"
+#include "watchface.h"
 
 #define SETTINGS_KEY 1
 #define WEATHER_KEY  2
@@ -261,9 +262,11 @@ void settings_handle_inbox(DictionaryIterator *iter, void *context) {
   }
   if (config_changed) {
     settings_save();
+    watchface_load_settings();
   }
   if (weather_changed) {
     weather_save();
+    watchface_update_weather();
   }
 
   (void)context;

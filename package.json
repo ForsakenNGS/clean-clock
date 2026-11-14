@@ -42,22 +42,29 @@
       "WEATHER_LOCATION",
       "TOP_PRIMARY_COLOR",
       "TOP_SECONDARY_COLOR",
+      "TOP_ACCENT_COLOR",
       "TOP_LEFT_ELEMENT",
       "TOP_CENTER_ELEMENT",
       "TOP_RIGHT_ELEMENT",
       "BOTTOM_PRIMARY_COLOR",
       "BOTTOM_SECONDARY_COLOR",
+      "BOTTOM_ACCENT_COLOR",
       "BOTTOM_LEFT_ELEMENT",
       "BOTTOM_CENTER_ELEMENT",
       "BOTTOM_RIGHT_ELEMENT",
-      "WEATHER_TEMP",
-      "WEATHER_ICON",
-      "WEATHER_TODAY_MIN",
-      "WEATHER_TODAY_MAX",
-      "WEATHER_TOMORROW_TEMP",
-      "WEATHER_TOMORROW_ICON",
-      "WEATHER_TOMORROW_MIN",
-      "WEATHER_TOMORROW_MAX",
+      "WEATHER_CONDITION",
+      "WEATHER_TEMPERATURE",
+      "WEATHER_TODAYS_CONDITION",
+      "WEATHER_TODAYS_MIN_TEMP",
+      "WEATHER_TODAYS_MAX_TEMP",
+      "WEATHER_TODAYS_PRECIP_CHANCE",
+      "WEATHER_TOMORROWS_CONDITION",
+      "WEATHER_TOMORROWS_MIN_TEMP",
+      "WEATHER_TOMORROWS_MAX_TEMP",
+      "WEATHER_TOMORROWS_PRECIP_CHANCE",
+      "WEATHER_UV_INDEX",
+      "WEATHER_SUNRISE_MINUTE",
+      "WEATHER_SUNSET_MINUTE",
       "READY"
     ],
     "resources": {
@@ -75,6 +82,66 @@
         {
           "file": "Teko.ffont",
           "name": "TEKO",
+          "type": "raw"
+        },
+        {
+          "file": "cloud_24.pdc",
+          "name": "CLOUD_24",
+          "type": "raw"
+        },
+        {
+          "file": "cloud_32.pdc",
+          "name": "CLOUD_32",
+          "type": "raw"
+        },
+        {
+          "file": "rain_24.pdc",
+          "name": "RAIN_24",
+          "type": "raw"
+        },
+        {
+          "file": "rain_32.pdc",
+          "name": "RAIN_32",
+          "type": "raw"
+        },
+        {
+          "file": "snow_24.pdc",
+          "name": "SNOW_24",
+          "type": "raw"
+        },
+        {
+          "file": "snow_32.pdc",
+          "name": "SNOW_32",
+          "type": "raw"
+        },
+        {
+          "file": "storm_24.pdc",
+          "name": "STORM_24",
+          "type": "raw"
+        },
+        {
+          "file": "storm_32.pdc",
+          "name": "STORM_32",
+          "type": "raw"
+        },
+        {
+          "file": "sun_24.pdc",
+          "name": "SUN_24",
+          "type": "raw"
+        },
+        {
+          "file": "sun_32.pdc",
+          "name": "SUN_32",
+          "type": "raw"
+        },
+        {
+          "file": "sun_cloud_24.pdc",
+          "name": "SUN_CLOUD_24",
+          "type": "raw"
+        },
+        {
+          "file": "sun_cloud_32.pdc",
+          "name": "SUN_CLOUD_32",
           "type": "raw"
         }
       ]

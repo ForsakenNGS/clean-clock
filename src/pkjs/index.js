@@ -1,3 +1,4 @@
+var weather = require('./weather');
 var keys = require('message_keys');
 
 var DEFAULTS = {
@@ -9,14 +10,16 @@ var DEFAULTS = {
   WEATHER_LOCATION: "",
   TOP_PRIMARY_COLOR: 0xFFFFFF,
   TOP_SECONDARY_COLOR: 0x000000,
+  TOP_ACCENT_COLOR: 0xAA0000,
   TOP_LEFT_ELEMENT: 2,
   TOP_CENTER_ELEMENT: 1,
   TOP_RIGHT_ELEMENT: 3,
   BOTTOM_PRIMARY_COLOR: 0xFFFFFF,
   BOTTOM_SECONDARY_COLOR: 0x000000,
-  BOTTOM_LEFT_ELEMENT: 11,
+  BOTTOM_ACCENT_COLOR: 0xAA0000,
+  BOTTOM_LEFT_ELEMENT: 12,
   BOTTOM_CENTER_ELEMENT: 21,
-  BOTTOM_RIGHT_ELEMENT: 13
+  BOTTOM_RIGHT_ELEMENT: 14
 };
 
 function getSettings() {
@@ -40,11 +43,13 @@ function sendSettings(settings) {
   payload[keys.WEATHER_LOCATION] = settings.WEATHER_LOCATION || '';
   payload[keys.TOP_PRIMARY_COLOR] = toInt(settings.TOP_PRIMARY_COLOR, 0xFFFFFF);
   payload[keys.TOP_SECONDARY_COLOR] = toInt(settings.TOP_SECONDARY_COLOR, 0x000000);
+  payload[keys.TOP_ACCENT_COLOR] = toInt(settings.TOP_ACCENT_COLOR, 0xAA0000);
   payload[keys.TOP_LEFT_ELEMENT] = toInt(settings.TOP_LEFT_ELEMENT, 0);
   payload[keys.TOP_CENTER_ELEMENT] = toInt(settings.TOP_CENTER_ELEMENT, 0);
   payload[keys.TOP_RIGHT_ELEMENT] = toInt(settings.TOP_RIGHT_ELEMENT, 0);
   payload[keys.BOTTOM_PRIMARY_COLOR] = toInt(settings.BOTTOM_PRIMARY_COLOR, 0xFFFFFF);
   payload[keys.BOTTOM_SECONDARY_COLOR] = toInt(settings.BOTTOM_SECONDARY_COLOR, 0x000000);
+  payload[keys.BOTTOM_ACCENT_COLOR] = toInt(settings.BOTTOM_ACCENT_COLOR, 0xAA0000);
   payload[keys.BOTTOM_LEFT_ELEMENT] = toInt(settings.BOTTOM_LEFT_ELEMENT, 0);
   payload[keys.BOTTOM_CENTER_ELEMENT] = toInt(settings.BOTTOM_CENTER_ELEMENT, 0);
   payload[keys.BOTTOM_RIGHT_ELEMENT] = toInt(settings.BOTTOM_RIGHT_ELEMENT, 0);
@@ -66,47 +71,10 @@ function weatherIconFromYahoo(code) {
   return 0;
 }
 
-function fetchWeather() {
-  var settings = getSettings();
-  var loc = (settings.WEATHER_LOCATION || '').trim();
-  var unit = toInt(settings.TEMP_UNIT, 0) === 1 ? 'f' : 'c';
-  var place = loc ? loc : 'auto:ip';
-  var yql = 'select item.condition,item.forecast from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + place + '") and u="' + unit + '"';
-  var url = 'https://query.yahooapis.com/v1/public/yql?format=json&q=' + encodeURIComponent(yql);
-
-  var xhr = new XMLHttpRequest();
-  xhr.onload = function() {
-    try {
-      var json = JSON.parse(this.responseText);
-      var channel = json && json.query && json.query.results && json.query.results.channel;
-      if (!channel) { console.log('No weather'); return; }
-      var cond = channel.item.condition || {};
-      var forecast = channel.item.forecast || [];
-      var today = forecast[0] || {};
-      var tomorrow = forecast[1] || {};
-      var payload = {};
-      payload[keys.WEATHER_TEMP] = toInt(cond.temp, 0);
-      payload[keys.WEATHER_ICON] = weatherIconFromYahoo(cond.code);
-      payload[keys.WEATHER_TODAY_MIN] = toInt(today.low, toInt(cond.temp, 0));
-      payload[keys.WEATHER_TODAY_MAX] = toInt(today.high, toInt(cond.temp, 0));
-      payload[keys.WEATHER_TOMORROW_TEMP] = toInt(tomorrow.high || tomorrow.low, toInt(cond.temp, 0));
-      payload[keys.WEATHER_TOMORROW_ICON] = weatherIconFromYahoo(tomorrow.code || cond.code);
-      payload[keys.WEATHER_TOMORROW_MIN] = toInt(tomorrow.low, 0);
-      payload[keys.WEATHER_TOMORROW_MAX] = toInt(tomorrow.high, 0);
-      Pebble.sendAppMessage(payload, function(){ console.log('Weather sent'); }, function(e){ console.log('Weather fail ' + JSON.stringify(e)); });
-    } catch (e) {
-      console.log('Weather parse error: ' + e);
-    }
-  };
-  xhr.onerror = function() { console.log('Weather request error'); };
-  xhr.open('GET', url);
-  xhr.send();
-}
-
 Pebble.addEventListener('ready', function() {
   console.log('PKJS ready');
   sendSettings(getSettings());
-  fetchWeather();
+  weather.updateWeather();
 });
 
 Pebble.addEventListener('appmessage', function(e) {

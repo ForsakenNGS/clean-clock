@@ -63,8 +63,9 @@
     <fieldset>
       <legend>Top bar</legend>
       <div class="row">
-        <div><label>Primary<input type="color" name="TOP_PRIMARY_COLOR" value="#ffffff"></label></div>
-        <div><label>Secondary<input type="color" name="TOP_SECONDARY_COLOR" value="#000000"></label></div>
+        <div><label>Text<input type="color" name="TOP_PRIMARY_COLOR" value="#ffffff"></label></div>
+        <div><label>Background<input type="color" name="TOP_SECONDARY_COLOR" value="#000000"></label></div>
+        <div><label>Accent<input type="color" name="TOP_ACCENT_COLOR" value="#aa0000"></label></div>
       </div>
       <label>Left element<select name="TOP_LEFT_ELEMENT"></select></label>
       <label>Center element<select name="TOP_CENTER_ELEMENT"></select></label>
@@ -74,8 +75,9 @@
     <fieldset>
       <legend>Bottom bar</legend>
       <div class="row">
-        <div><label>Primary<input type="color" name="BOTTOM_PRIMARY_COLOR" value="#ffffff"></label></div>
-        <div><label>Secondary<input type="color" name="BOTTOM_SECONDARY_COLOR" value="#000000"></label></div>
+        <div><label>Text<input type="color" name="BOTTOM_PRIMARY_COLOR" value="#ffffff"></label></div>
+        <div><label>Background<input type="color" name="BOTTOM_SECONDARY_COLOR" value="#000000"></label></div>
+        <div><label>Accent<input type="color" name="BOTTOM_ACCENT_COLOR" value="#000000"></label></div>
       </div>
       <label>Left element<select name="BOTTOM_LEFT_ELEMENT"></select></label>
       <label>Center element<select name="BOTTOM_CENTER_ELEMENT"></select></label>
@@ -96,9 +98,10 @@
       ['5','Seconds'],
       // Weather elements
       ['11','Current weather (icon+temp)'],
-      ['12','Today min/max'],
-      ['13','Tomorrow forecast (icon+temp)'],
-      ['14','Tomorrow min/max'],
+      ['12','Todays weather (icon + max temp)'],
+      ['13','Todays min/max temp'],
+      ['14','Tomorrow forecast (icon + max temp)'],
+      ['15','Tomorrow min/max'],
       // Watch information / sensors
       ['21','Battery %'],
       ['22','Heart rate']
@@ -120,14 +123,16 @@
       WEATHER_LOCATION: "",
       TOP_PRIMARY_COLOR: 0xFFFFFF,
       TOP_SECONDARY_COLOR: 0x000000,
+      TOP_ACCENT_COLOR: 0xAA0000,
       TOP_LEFT_ELEMENT: 2,
       TOP_CENTER_ELEMENT: 1,
       TOP_RIGHT_ELEMENT: 3,
       BOTTOM_PRIMARY_COLOR: 0xFFFFFF,
       BOTTOM_SECONDARY_COLOR: 0x000000,
-      BOTTOM_LEFT_ELEMENT: 11,
+      BOTTOM_ACCENT_COLOR: 0xAA0000,
+      BOTTOM_LEFT_ELEMENT: 12,
       BOTTOM_CENTER_ELEMENT: 21,
-      BOTTOM_RIGHT_ELEMENT: 13
+      BOTTOM_RIGHT_ELEMENT: 14
     };
 
 

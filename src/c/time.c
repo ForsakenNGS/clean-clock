@@ -9,13 +9,21 @@ static void time_update_layer(Layer *layer, GContext *ctx) {
   if (!d->font) return;
 
   GRect bounds = layer_get_bounds(layer);
-  graphics_context_set_fill_color(ctx, d->color_secondary);
+  graphics_context_set_fill_color(ctx, d->config.color_secondary);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
   GRect text_bounds = GRect(4, watchface_bar_height() + 2, bounds.size.w - 8, bounds.size.h - 4);
-  text_render_fit(ctx, text_bounds, d->buffer, d->font, d->color_primary, GTextAlignmentCenter);
+  text_render_fit(ctx, text_bounds, d->buffer, d->font, d->config.color_primary, GTextAlignmentCenter);
 }
 
-void time_load(TimeSection *section, Layer *root_layer, const GColor color_primary, const GColor color_secondary, const TimeFont font) {
+TimeConfig time_config(const GColor color_primary, const GColor color_secondary, const TimeFont font) {
+  TimeConfig config;
+  config.color_primary = color_primary;
+  config.color_secondary = color_secondary;
+  config.font = font;
+  return config;
+}
+
+void time_load(TimeSection *section, Layer *root_layer, const TimeConfig config) {
   GRect bounds = layer_get_bounds(root_layer);
   // Create time segment
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Time rect: (%d, %d, %d, %d)", 0, watchface_bar_height(), bounds.size.w, watchface_time_height());
@@ -24,17 +32,16 @@ void time_load(TimeSection *section, Layer *root_layer, const GColor color_prima
     sizeof(TimeSectionData)
   );
   section->data = (TimeSectionData*)layer_get_data(section->layer);
-  time_load_settings(section, color_primary, color_secondary, font);
+  time_load_settings(section, config);
   layer_set_update_proc(section->layer, time_update_layer);
   layer_add_child(root_layer, section->layer);
 }
 
-void time_load_settings(TimeSection *section, const GColor color_primary, const GColor color_secondary, const TimeFont font) {
-  section->data->color_primary = color_primary;
-  section->data->color_secondary = color_secondary;
-  if (font == TIME_FONT_BEBAS) {
+void time_load_settings(TimeSection *section, const TimeConfig config) {
+  section->data->config = config;
+  if (config.font == TIME_FONT_BEBAS) {
     time_load_font(section, RESOURCE_ID_BEBAS);
-  } else if (font == TIME_FONT_BARLOW) {
+  } else if (config.font == TIME_FONT_BARLOW) {
     time_load_font(section, RESOURCE_ID_BARLOW);
   } else {
     time_load_font(section, RESOURCE_ID_TEKO);

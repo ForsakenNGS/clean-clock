@@ -60,16 +60,25 @@ void watchface_deinit(void) {
 void watchface_load(Window *window) {
   ClaySettings *s = settings_get();
   s_watchface.root_layer = window_get_root_layer(window);
-  s_watchface.time_font = s->time_font;
 #if defined(PBL_PLATFORM_EMERY)
   s_watchface.bar_font = fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK);
+  s_watchface.bar_font_small = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 #else
-  s_watchface.bar_font = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
+  s_watchface.bar_font = fonts_get_system_font(FONT_KEY_GOTHIC_28);
+  s_watchface.bar_font_small = fonts_get_system_font(FONT_KEY_GOTHIC_14);
 #endif
-  bar_load(&s_watchface.top, s_watchface.root_layer, BAR_LOCATION_TOP);
-  time_load(&s_watchface.time, s_watchface.root_layer, GColorWhite, GColorBlack, s_watchface.time_font);
-  bar_load(&s_watchface.bottom, s_watchface.root_layer, BAR_LOCATION_BOTTOM);
-  window_set_background_color(window, s_watchface.time.data->color_secondary);
+  bar_load(&s_watchface.top, s_watchface.root_layer, BAR_LOCATION_TOP, s->top);
+  time_load(&s_watchface.time, s_watchface.root_layer, time_config(GColorWhite, GColorBlack, s->time_font));
+  bar_load(&s_watchface.bottom, s_watchface.root_layer, BAR_LOCATION_BOTTOM, s->bottom);
+  window_set_background_color(window, s_watchface.time.data->config.color_secondary);
+  watchface_refresh();
+}
+
+void watchface_load_settings(void) {
+  ClaySettings *s = settings_get();
+  bar_load_settings(&s_watchface.top, s->top);
+  time_load_settings(&s_watchface.time, time_config(GColorWhite, GColorBlack, s->time_font));
+  bar_load_settings(&s_watchface.bottom, s->bottom);
   watchface_refresh();
 }
 
@@ -136,9 +145,9 @@ TimeUnits watchface_update_time_units() {
 }
 
 bool watchface_has_element_of_type(const ElementType type) {
-  if ((s_watchface.top.left.type == type) || (s_watchface.top.center.type == type) || 
-    (s_watchface.top.right.type == type) || (s_watchface.bottom.left.type == type) || 
-    (s_watchface.bottom.center.type == type) || (s_watchface.bottom.right.type == type))
+  if ((s_watchface.top.left.data->config.type == type) || (s_watchface.top.center.data->config.type == type) || 
+    (s_watchface.top.right.data->config.type == type) || (s_watchface.bottom.left.data->config.type == type) || 
+    (s_watchface.bottom.center.data->config.type == type) || (s_watchface.bottom.right.data->config.type == type))
   {
     return true;
   } else {
@@ -168,6 +177,10 @@ void watchface_apply_health_subscription(void) {
 
 GFont watchface_bar_font(void) {
   return s_watchface.bar_font;
+}
+
+GFont watchface_bar_font_small(void) {
+  return s_watchface.bar_font_small;
 }
 
 int16_t watchface_bar_height(void) {

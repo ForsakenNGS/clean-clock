@@ -15,10 +15,11 @@ static void time_update_layer(Layer *layer, GContext *ctx) {
   text_render_fit(ctx, text_bounds, d->buffer, d->font, d->config.color_primary, GTextAlignmentCenter);
 }
 
-TimeConfig time_config(const GColor color_primary, const GColor color_secondary, const TimeFont font) {
+TimeConfig time_config(const GColor color_primary, const GColor color_secondary, const GColor color_accent, const TimeFont font) {
   TimeConfig config;
   config.color_primary = color_primary;
   config.color_secondary = color_secondary;
+  config.color_accent = color_accent;
   config.font = font;
   return config;
 }

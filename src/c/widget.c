@@ -266,8 +266,6 @@ WidgetConfig widget_config(const BarLocation bar, const WidgetLocation location,
 }
 
 void widget_load(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget type: %d", config.type);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget width: %d", width);
   GRect bounds = layer_get_bounds(bar_layer);
   // Create widget segment
   int16_t left = 0;
@@ -277,29 +275,45 @@ void widget_load(Widget *widget, Layer *bar_layer, const WidgetConfig config, co
     left = bounds.size.w - width;
   }
   const GRect widget_bounds = GRect(left, 0, width, watchface_bar_height());
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget rect: (%d, %d, %d, %d)", widget_bounds.origin.x, widget_bounds.origin.y, widget_bounds.size.w, widget_bounds.size.h);
   widget->layer = layer_create_with_data(
     widget_bounds,
     sizeof(WidgetData)
   );
   widget->data = (WidgetData*)layer_get_data(widget->layer);
-  const int16_t px = widget_get_padding_horizontal();
-  const int16_t py = widget_get_padding_vertical(config);
-  widget->data->text_bounds = GRect(px, py, widget_bounds.size.w - px * 2, widget_bounds.size.h - py * 2);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget text rect: (%d, %d, %d, %d)", widget->data->text_bounds.origin.x, widget->data->text_bounds.origin.y, widget->data->text_bounds.size.w, widget->data->text_bounds.size.h);
-  widget_load_settings(widget, config);
+  widget_load_settings(widget, bar_layer, config, width);
   layer_set_update_proc(widget->layer, widget_update_layer);
   layer_add_child(bar_layer, widget->layer);
 }
 
-void widget_load_settings(Widget *widget, const WidgetConfig config) {
+void widget_load_settings(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget type: %d", config.type);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget width: %d", width);
+  // Update config
   widget->data->icon = UINT32_MAX; // UINT32_MAX -> no icon
   widget->data->icon_pdc = NULL;
   widget->data->config = config;
-  GRect widget_bounds = layer_get_bounds(widget->layer);
+  // Recalculate widget bounds
+  GRect bounds = layer_get_bounds(bar_layer);
+  int16_t left = 0;
+  if (config.location == WIDGET_LOCATION_CENTER) {
+    left = (bounds.size.w - width) / 2;
+  } else if (config.location == WIDGET_LOCATION_RIGHT) {
+    left = bounds.size.w - width;
+  }
+  const GRect widget_bounds = GRect(left, 0, width, watchface_bar_height());
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget rect: (%d, %d, %d, %d)", widget_bounds.origin.x, widget_bounds.origin.y, widget_bounds.size.w, widget_bounds.size.h);
+  // Recalculate text bounds
   int16_t px = widget_get_padding_horizontal();
   int16_t py = widget_get_padding_vertical(config);
   widget->data->text_bounds = GRect(px, py, widget_bounds.size.w - px * 2, widget_bounds.size.h - py * 2);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget text rect: (%d, %d, %d, %d)", widget->data->text_bounds.origin.x, widget->data->text_bounds.origin.y, widget->data->text_bounds.size.w, widget->data->text_bounds.size.h);
+  // Update widget layer bounds
+  if (config.type == ELEMENT_NONE) {
+    layer_set_hidden(widget->layer, true);
+  } else {
+    layer_set_hidden(widget->layer, false);
+  }
+  layer_set_frame(widget->layer, widget_bounds);
 }
 
 void widget_unload(Widget *widget) {

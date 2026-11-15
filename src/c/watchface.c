@@ -59,7 +59,10 @@ void watchface_load(Window *window) {
   s_watchface.bar_font_small = fonts_get_system_font(FONT_KEY_GOTHIC_14);
 #endif
   bar_load(&s_watchface.top, s_watchface.root_layer, BAR_LOCATION_TOP, s->top);
-  time_load(&s_watchface.time, s_watchface.root_layer, time_config(GColorWhite, GColorBlack, s->time_font));
+  const GColor color_primary = watchface_color(s->time_primary_color);
+  const GColor color_secondary = watchface_color(s->time_secondary_color);
+  const GColor color_accent = watchface_color(s->time_accent_color);
+  time_load(&s_watchface.time, s_watchface.root_layer, time_config(color_primary, color_secondary, color_accent, s->time_font));
   bar_load(&s_watchface.bottom, s_watchface.root_layer, BAR_LOCATION_BOTTOM, s->bottom);
   window_set_background_color(window, s_watchface.time.data->config.color_secondary);
   watchface_apply_subscriptions();
@@ -67,9 +70,13 @@ void watchface_load(Window *window) {
 }
 
 void watchface_load_settings(void) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Settings update");
   ClaySettings *s = settings_get();
   bar_load_settings(&s_watchface.top, s->top);
-  time_load_settings(&s_watchface.time, time_config(GColorWhite, GColorBlack, s->time_font));
+  const GColor color_primary = watchface_color(s->time_primary_color);
+  const GColor color_secondary = watchface_color(s->time_secondary_color);
+  const GColor color_accent = watchface_color(s->time_accent_color);
+  time_load_settings(&s_watchface.time, time_config(color_primary, color_secondary, color_accent, s->time_font));
   bar_load_settings(&s_watchface.bottom, s->bottom);
   watchface_apply_subscriptions();
   watchface_refresh();

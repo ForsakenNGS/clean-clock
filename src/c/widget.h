@@ -51,7 +51,7 @@ uint32_t widget_weather_icon(int condition);
 
 WidgetConfig widget_config(const BarLocation bar, const WidgetLocation location, const ElementType type, const GColor color_primary, const GColor color_secondary, const GColor color_accent);
 void widget_load(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width);
-void widget_load_settings(Widget *widget, const WidgetConfig config);
+void widget_load_settings(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width);
 void widget_unload(Widget *widget);
 void widget_update_any(Widget *widget);
 void widget_update_battery(Widget *widget, BatteryChargeState charge);

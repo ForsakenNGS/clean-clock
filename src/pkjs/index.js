@@ -3,8 +3,11 @@ var keys = require('message_keys');
 
 var DEFAULTS = {
   TIME_FORMAT: "24",
-  TEMP_UNIT: "0",
+  TEMP_UNIT: "C",
   LANGUAGE: "",
+  TIME_PRIMARY_COLOR: 0xFFFFFF,
+  TIME_SECONDARY_COLOR: 0x000000,
+  TIME_ACCENT_COLOR: 0xAA0000,
   TIME_FONT: "TEKO",
   WEATHER_INTERVAL: 4,
   WEATHER_LOCATION: "",
@@ -38,6 +41,9 @@ function sendSettings(settings) {
   payload[keys.TIME_FORMAT] = settings.TIME_FORMAT || "24";
   payload[keys.TEMP_UNIT] = settings.TEMP_UNIT || "C";
   payload[keys.LANGUAGE] = settings.LANGUAGE || "";
+  payload[keys.TIME_PRIMARY_COLOR] = toInt(settings.TIME_PRIMARY_COLOR, 0xFFFFFF);
+  payload[keys.TIME_SECONDARY_COLOR] = toInt(settings.TIME_SECONDARY_COLOR, 0x000000);
+  payload[keys.TIME_ACCENT_COLOR] = toInt(settings.TIME_ACCENT_COLOR, 0xAA0000);
   payload[keys.TIME_FONT] = settings.TIME_FONT || "LECO";
   payload[keys.WEATHER_INTERVAL] = Math.max(1, Math.min(24, toInt(settings.WEATHER_INTERVAL, 1)));
   payload[keys.WEATHER_LOCATION] = settings.WEATHER_LOCATION || '';
@@ -55,7 +61,7 @@ function sendSettings(settings) {
   payload[keys.BOTTOM_RIGHT_ELEMENT] = toInt(settings.BOTTOM_RIGHT_ELEMENT, 0);
 
   Pebble.sendAppMessage(payload, function() {
-    console.log('Settings sent');
+    console.log('Settings sent', payload);
   }, function(e) {
     console.log('Settings send failed: ' + JSON.stringify(e));
   });

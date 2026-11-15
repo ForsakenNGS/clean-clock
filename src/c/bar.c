@@ -25,12 +25,16 @@ void bar_load(BarSection *section, Layer *root_layer, const BarLocation location
 }
 
 void bar_load_settings(BarSection *section, const BarSettings bs) {
+  GRect bounds = layer_get_bounds(section->layer);
   const GColor color_primary = watchface_color(bs.primary_color);
   const GColor color_secondary = watchface_color(bs.secondary_color);
   const GColor color_accent = watchface_color(bs.accent_color);
-  widget_load_settings(&section->left, widget_config(section->location, WIDGET_LOCATION_LEFT, bs.left, color_primary, color_secondary, color_accent));
-  widget_load_settings(&section->center, widget_config(section->location, WIDGET_LOCATION_CENTER, bs.center, color_primary, color_secondary, color_accent));
-  widget_load_settings(&section->right, widget_config(section->location, WIDGET_LOCATION_RIGHT, bs.right, color_primary, color_secondary, color_accent));
+  const WidgetConfig config_left = widget_config(section->location, WIDGET_LOCATION_LEFT, bs.left, color_primary, color_secondary, color_accent);
+  const WidgetConfig config_center = widget_config(section->location, WIDGET_LOCATION_CENTER, bs.center, color_primary, color_secondary, color_accent);
+  const WidgetConfig config_right = widget_config(section->location, WIDGET_LOCATION_RIGHT, bs.right, color_primary, color_secondary, color_accent);
+  widget_load_settings(&section->left, section->layer, config_left, bar_get_widget_width(bs, WIDGET_LOCATION_LEFT, bounds));
+  widget_load_settings(&section->center, section->layer, config_center, bar_get_widget_width(bs, WIDGET_LOCATION_CENTER, bounds));
+  widget_load_settings(&section->right, section->layer, config_right, bar_get_widget_width(bs, WIDGET_LOCATION_RIGHT, bounds));
 }
 
 void bar_unload(BarSection *section) {

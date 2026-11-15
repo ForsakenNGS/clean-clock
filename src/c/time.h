@@ -7,6 +7,7 @@
 typedef struct {
   GColor color_primary;
   GColor color_secondary;
+  GColor color_accent;
   TimeFont font;
 } TimeConfig;
 
@@ -21,7 +22,7 @@ typedef struct {
   TimeSectionData *data;
 } TimeSection;
 
-TimeConfig time_config(const GColor color_primary, const GColor color_secondary, const TimeFont font);
+TimeConfig time_config(const GColor color_primary, const GColor color_secondary, const GColor color_accent, const TimeFont font);
 void time_load(TimeSection *section, Layer *root_layer, const TimeConfig config);
 void time_load_settings(TimeSection *section, const TimeConfig config);
 void time_load_font(TimeSection *section, const uint32_t resource_id);

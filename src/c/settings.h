@@ -49,6 +49,9 @@ typedef struct {
   int32_t time_format;
   int32_t temp_unit;
   char language[3];
+  int32_t time_primary_color;
+  int32_t time_secondary_color;
+  int32_t time_accent_color;
   int32_t time_font;
   int32_t weather_interval_hours;
   char weather_location[64];

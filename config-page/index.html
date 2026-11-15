@@ -13,6 +13,7 @@
     .row { display:flex; gap:8px; }
     .row > div { flex:1; }
     button { width:100%; padding:12px; margin-top:16px; font-size:16px; }
+    input[type="color"] { min-height: 64px; }
   </style>
 </head>
 <body>
@@ -41,6 +42,11 @@
 
     <fieldset>
       <legend>Time element</legend>
+      <div class="row">
+        <div><label>Text<input type="color" name="TIME_PRIMARY_COLOR" value="#ffffff"></label></div>
+        <div><label>Background<input type="color" name="TIME_SECONDARY_COLOR" value="#000000"></label></div>
+        <div><label>Accent<input type="color" name="TIME_ACCENT_COLOR" value="#aa0000"></label></div>
+      </div>
       <label>Font
         <select name="TIME_FONT">
           <option value="TEKO">Teko</option>
@@ -116,8 +122,11 @@
     ];
     const defaults = {
       TIME_FORMAT: "24",
-      TEMP_UNIT: "0",
+      TEMP_UNIT: "C",
       LANGUAGE: "",
+      TIME_PRIMARY_COLOR: 0xFFFFFF,
+      TIME_SECONDARY_COLOR: 0x000000,
+      TIME_ACCENT_COLOR: 0xAA0000,
       TIME_FONT: "TEKO",
       WEATHER_INTERVAL: 4,
       WEATHER_LOCATION: "",

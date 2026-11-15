@@ -11,6 +11,9 @@ static void settings_load_defaults(void) {
   s_settings.time_format = TIME_FORMAT_24H;
   s_settings.temp_unit = TEMP_UNIT_C;
   strncpy(s_settings.language, "", sizeof(s_settings.language));
+  s_settings.time_primary_color = 0xFFFFFF;
+  s_settings.time_secondary_color = 0x000000;
+  s_settings.time_accent_color = 0xAA0000;
   s_settings.time_font = TIME_FONT_BEBAS;
   s_settings.weather_interval_hours = 1;
   strncpy(s_settings.weather_location, "", sizeof(s_settings.weather_location));
@@ -107,6 +110,24 @@ void settings_handle_inbox(DictionaryIterator *iter, void *context) {
     snprintf(s_settings.language, sizeof(s_settings.language), "%s", t->value->cstring);
     config_changed = true;
   }
+  // Time primary color
+  t = dict_find(iter, MESSAGE_KEY_TIME_PRIMARY_COLOR);
+  if (t) {
+    s_settings.time_primary_color = prv_color_from_tuple(t, s_settings.time_primary_color);
+    config_changed = true;
+  }
+  // Time secondary color
+  t = dict_find(iter, MESSAGE_KEY_TIME_SECONDARY_COLOR);
+  if (t) {
+    s_settings.time_secondary_color = prv_color_from_tuple(t, s_settings.time_secondary_color);
+    config_changed = true;
+  }
+  // Time accent color
+  t = dict_find(iter, MESSAGE_KEY_TIME_ACCENT_COLOR);
+  if (t) {
+    s_settings.time_accent_color = prv_color_from_tuple(t, s_settings.time_accent_color);
+    config_changed = true;
+  }
   // Time font
   t = dict_find(iter, MESSAGE_KEY_TIME_FONT);
   if (t) {
@@ -144,6 +165,12 @@ void settings_handle_inbox(DictionaryIterator *iter, void *context) {
     s_settings.top.secondary_color = prv_color_from_tuple(t, s_settings.top.secondary_color);
     config_changed = true;
   }
+  // Top bar: Accent color
+  t = dict_find(iter, MESSAGE_KEY_TOP_ACCENT_COLOR);
+  if (t) {
+    s_settings.top.accent_color = prv_color_from_tuple(t, s_settings.top.accent_color);
+    config_changed = true;
+  }
   // Top bar: Left element
   t = dict_find(iter, MESSAGE_KEY_TOP_LEFT_ELEMENT);
   if (t) {
@@ -173,6 +200,12 @@ void settings_handle_inbox(DictionaryIterator *iter, void *context) {
   t = dict_find(iter, MESSAGE_KEY_BOTTOM_SECONDARY_COLOR);
   if (t) {
     s_settings.bottom.secondary_color = prv_color_from_tuple(t, s_settings.bottom.secondary_color);
+    config_changed = true;
+  }
+  // Bottom bar: Accent color
+  t = dict_find(iter, MESSAGE_KEY_BOTTOM_ACCENT_COLOR);
+  if (t) {
+    s_settings.bottom.accent_color = prv_color_from_tuple(t, s_settings.bottom.accent_color);
     config_changed = true;
   }
   // Bottom bar: Left element

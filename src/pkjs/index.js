@@ -86,7 +86,7 @@ Pebble.addEventListener('ready', function() {
 Pebble.addEventListener('appmessage', function(e) {
   console.log('AppMessage received: ' + JSON.stringify(e.payload || {}));
   if (e.payload && e.payload[keys.READY] !== undefined) {
-    fetchWeather();
+    weather.updateWeather();
   }
 });
 
@@ -102,7 +102,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
     var settings = JSON.parse(decodeURIComponent(e.response));
     localStorage.setItem('clay-settings', JSON.stringify(settings));
     sendSettings(settings);
-    fetchWeather();
+    weather.updateWeather(true);
   } catch (err) {
     console.log('Config parse error: ' + err);
   }

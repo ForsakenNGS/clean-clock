@@ -15,6 +15,14 @@ var MASTER_NAME_KEY = 'weather_loc';
 var MASTER_LAT_KEY = 'weather_loc_lat';
 var MASTER_LNG_KEY = 'weather_loc_lng';
 
+// the user-typed place name sent from the config page (empty = use GPS)
+var LOCATION_SETTING_KEY = 'WEATHER_LOCATION';
+var LOCATION_SETTING_STORAGE_KEY = 'clay-settings';
+
+// the last place name we tried to resolve, so we don't re-geocode the same
+// failing input on every update
+var lastFailedQuery = null;
+
 // carries master's chosen city over, the first time this version runs
 function migrateFromMaster() {
   if (window.localStorage.getItem(USE_GPS_KEY) !== null) {
@@ -78,6 +86,19 @@ function getManualCoords() {
   return { latitude: lat, longitude: lng };
 }
 
+// the place name typed on the config page, or '' when GPS should be used
+function getWeatherLocationQuery() {
+  try {
+    var raw = window.localStorage.getItem(LOCATION_SETTING_STORAGE_KEY);
+    if (!raw) return '';
+    var settings = JSON.parse(raw);
+    var q = settings && settings[LOCATION_SETTING_KEY];
+    return (q || '').trim();
+  } catch (e) {
+    return '';
+  }
+}
+
 // calls back with a geolocation-style position ({ coords: { latitude,
 // longitude } }), or calls onError if GPS fails
 function getPosition(onSuccess, onError) {
@@ -88,11 +109,38 @@ function getPosition(onSuccess, onError) {
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
-    onSuccess,
-    onError,
-    {timeout: 15000, maximumAge: 60000}
-  );
+  var query = getWeatherLocationQuery();
+  if (!query) {
+    // fall back to GPS
+    navigator.geolocation.getCurrentPosition(
+      onSuccess,
+      onError,
+      {timeout: 15000, maximumAge: 60000}
+    );
+    return;
+  }
+
+  // resolve the typed place name first; fall back to GPS on failure
+  var geocoder = require('./geocode');
+  geocoder.geocode(query, function (coords) {
+    if (coords) {
+      console.log('Using geocoded location "' + query + '": ' +
+        coords.latitude + ',' + coords.longitude);
+      onSuccess({ coords: coords });
+      lastFailedQuery = null;
+    } else if (lastFailedQuery === query) {
+      // already failed once for this input, don't spam the network/GPS
+      console.log('Geocode failed for "' + query + '", using GPS');
+      navigator.geolocation.getCurrentPosition(
+        onSuccess,
+        onError,
+        {timeout: 15000, maximumAge: 60000}
+      );
+    } else {
+      lastFailedQuery = query;
+      onError(new Error('Geocoding failed for "' + query + '"'));
+    }
+  });
 }
 
 module.exports.migrateFromMaster = migrateFromMaster;

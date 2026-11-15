@@ -208,48 +208,60 @@ GTextAlignment widget_font_align(const WidgetConfig config) {
 }
 
 uint32_t widget_weather_icon(int condition) {
+  return widget_weather_icon_for_color(condition, GColorWhite);
+}
+
+// Select the matching color variant of a weather icon. The icon palette only
+// contains black and white strokes, so the variant is chosen based on the
+// configured primary color: a light primary color renders the white icon, a
+// dark primary color renders the black icon.
+uint32_t widget_weather_icon_for_color(int condition, GColor color_primary) {
+  // GColorBlack has alpha 0b11 and RGB all 0; GColorWhite has alpha 0b11 and RGB
+  // all 1. Compare the RGB portion to decide whether the primary color is dark.
+  bool is_dark = (color_primary.argb & 0x3F) == 0;
+
   switch (condition) {
     case 0: // Clear day
     case 1: // Clear night
       #if defined(PBL_PLATFORM_EMERY)
-      return RESOURCE_ID_SUN_32;
+      return is_dark ? RESOURCE_ID_SUN_BLACK_32 : RESOURCE_ID_SUN_WHITE_32;
       #else
-      return RESOURCE_ID_SUN_24;
+      return is_dark ? RESOURCE_ID_SUN_BLACK_24 : RESOURCE_ID_SUN_WHITE_24;
       #endif
-    case 2: // Cloudy day      
+    case 2: // Cloudy day
       #if defined(PBL_PLATFORM_EMERY)
-      return RESOURCE_ID_CLOUD_32;
+      return is_dark ? RESOURCE_ID_CLOUD_BLACK_32 : RESOURCE_ID_CLOUD_WHITE_32;
       #else
-      return RESOURCE_ID_CLOUD_24;
+      return is_dark ? RESOURCE_ID_CLOUD_BLACK_24 : RESOURCE_ID_CLOUD_WHITE_24;
       #endif
     case 3: // Heavy rain
     case 5: // Light rain
       #if defined(PBL_PLATFORM_EMERY)
-      return RESOURCE_ID_RAIN_32;
+      return is_dark ? RESOURCE_ID_RAIN_BLACK_32 : RESOURCE_ID_RAIN_WHITE_32;
       #else
-      return RESOURCE_ID_RAIN_24;
+      return is_dark ? RESOURCE_ID_RAIN_BLACK_24 : RESOURCE_ID_RAIN_WHITE_24;
       #endif
     case 4: // Heavy snow
     case 6: // Light snow
     case 9: // Raining and snowing
       #if defined(PBL_PLATFORM_EMERY)
-      return RESOURCE_ID_SNOW_32;
+      return is_dark ? RESOURCE_ID_SNOW_BLACK_32 : RESOURCE_ID_SNOW_WHITE_32;
       #else
-      return RESOURCE_ID_SNOW_24;
+      return is_dark ? RESOURCE_ID_SNOW_BLACK_24 : RESOURCE_ID_SNOW_WHITE_24;
       #endif
     default:
     case 7: // Partly cloudy night
     case 8: // Partly cloudy day
       #if defined(PBL_PLATFORM_EMERY)
-      return RESOURCE_ID_SUN_CLOUD_32;
+      return is_dark ? RESOURCE_ID_SUN_CLOUD_BLACK_32 : RESOURCE_ID_SUN_CLOUD_WHITE_32;
       #else
-      return RESOURCE_ID_SUN_CLOUD_24;
+      return is_dark ? RESOURCE_ID_SUN_CLOUD_BLACK_24 : RESOURCE_ID_SUN_CLOUD_WHITE_24;
       #endif
     case 10: // Thunderstorm
       #if defined(PBL_PLATFORM_EMERY)
-      return RESOURCE_ID_STORM_32;
+      return is_dark ? RESOURCE_ID_STORM_BLACK_32 : RESOURCE_ID_STORM_WHITE_32;
       #else
-      return RESOURCE_ID_STORM_24;
+      return is_dark ? RESOURCE_ID_STORM_BLACK_24 : RESOURCE_ID_STORM_WHITE_24;
       #endif
   }
 }
@@ -381,7 +393,7 @@ void widget_update_weather(Widget *widget) {
   switch (widget->data->config.type) {
     case ELEMENT_WEATHER_CURRENT:
       if (w->currentCondition > -1) {
-        widget_temp_icon = widget_weather_icon(w->currentCondition);
+        widget_temp_icon = widget_weather_icon_for_color(w->currentCondition, widget->data->config.color_primary);
         snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->currentTemp);
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
@@ -389,7 +401,7 @@ void widget_update_weather(Widget *widget) {
       break;
     case ELEMENT_WEATHER_TODAY:
       if (w->todaysCondition > -1) {
-        widget_temp_icon = widget_weather_icon(w->todaysCondition);
+        widget_temp_icon = widget_weather_icon_for_color(w->todaysCondition, widget->data->config.color_primary);
         snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->todaysMaxTemp);
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
@@ -404,7 +416,7 @@ void widget_update_weather(Widget *widget) {
       break;
     case ELEMENT_WEATHER_TOMORROW:
       if (w->tomorrowsCondition > -1) {
-        widget_temp_icon = widget_weather_icon(w->tomorrowsCondition);
+        widget_temp_icon = widget_weather_icon_for_color(w->tomorrowsCondition, widget->data->config.color_primary);
         snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->tomorrowsMaxTemp);
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");

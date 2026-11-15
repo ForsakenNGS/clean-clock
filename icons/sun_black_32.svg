@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" version="1.1" id="svg1">
+  <defs id="defs1" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 22.4 16 L 22.3285 16.9539 L 22.1157 17.8864 L 21.7662 18.7768 L 21.2879 19.6052 L 20.6916 20.3531 L 19.9904 21.0037 L 19.2 21.5425 L 18.3382 21.9576 L 17.4242 22.2395 L 16.4783 22.3821 L 15.5218 22.3821 L 14.5759 22.2396 L 13.6619 21.9576 L 12.8001 21.5426 L 12.0097 21.0038 L 11.3085 20.3532 L 10.7121 19.6053 L 10.2338 18.7769 L 9.88436 17.8865 L 9.6715 16.954 L 9.6 16 L 9.67148 15.0461 L 9.88433 14.1136 L 10.2338 13.2232 L 10.7121 12.3948 L 11.3084 11.6469 L 12.0096 10.9963 L 12.8 10.4575 L 13.6618 10.0424 L 14.5758 9.76047 L 15.5217 9.6179 L 16.4782 9.61789 L 17.4241 9.76044 L 18.3381 10.0424 L 19.1999 10.4574 L 19.9903 10.9962 L 20.6915 11.6468 L 21.2879 12.3947 L 21.7662 13.2231 L 22.1156 14.1135 L 22.3285 15.046 L 22.4 16 L 22.4 16" id="path9" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 7.5136 7.5136 L 6.94827 6.94827 L 6.38293 6.38293 L 5.8176 5.8176" id="path8" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 26.1824 26.1824 L 25.6171 25.6171 L 25.0517 25.0517 L 24.4864 24.4864" id="path7" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 5.8176 26.1824 L 6.38293 25.6171 L 6.94827 25.0517 L 7.5136 24.4864" id="path6" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 24.4848 7.5152 L 25.0507 6.94933 L 25.6165 6.38347 L 26.1824 5.8176" id="path5" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 4 16 L 3.2 16 L 2.4 16 L 1.6 16" id="path4" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 30.4 16 L 29.6 16 L 28.8 16 L 28 16" id="path3" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 16 30.4 L 16 29.6 L 16 28.8 L 16 28" id="path2" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:2" d="M 16 4 L 16 3.2 L 16 2.4 L 16 1.6" id="path1" />
+</svg>

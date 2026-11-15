@@ -48,6 +48,7 @@ bool widget_has_small_font(const WidgetConfig config);
 GFont widget_font(const WidgetConfig config);
 GTextAlignment widget_font_align(const WidgetConfig config);
 uint32_t widget_weather_icon(int condition);
+uint32_t widget_weather_icon_for_color(int condition, GColor color_primary);
 
 WidgetConfig widget_config(const BarLocation bar, const WidgetLocation location, const ElementType type, const GColor color_primary, const GColor color_secondary, const GColor color_accent);
 void widget_load(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width);

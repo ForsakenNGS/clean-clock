@@ -33,6 +33,20 @@
       "health",
       "location"
     ],
+    "usesPermissions": [
+      "Location",
+      {
+        "name": "Internet",
+        "parameters": {
+          "domains": [
+            "api.open-meteo.com",
+            "clean-clock.godlike.biz",
+            "photon.komoot.io",
+            "geocode.xyz"
+          ]
+        }
+      }
+    ],
     "messageKeys": [
       "TIME_FORMAT",
       "TEMP_UNIT",

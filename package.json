@@ -117,16 +117,6 @@
           "type": "raw"
         },
         {
-          "file": "cloud_black_32.pdc",
-          "name": "CLOUD_BLACK_32",
-          "type": "raw"
-        },
-        {
-          "file": "cloud_white_32.pdc",
-          "name": "CLOUD_WHITE_32",
-          "type": "raw"
-        },
-        {
           "file": "rain_black_16.pdc",
           "name": "RAIN_BLACK_16",
           "type": "raw"
@@ -134,16 +124,6 @@
         {
           "file": "rain_white_16.pdc",
           "name": "RAIN_WHITE_16",
-          "type": "raw"
-        },
-        {
-          "file": "rain_black_32.pdc",
-          "name": "RAIN_BLACK_32",
-          "type": "raw"
-        },
-        {
-          "file": "rain_white_32.pdc",
-          "name": "RAIN_WHITE_32",
           "type": "raw"
         },
         {
@@ -157,16 +137,6 @@
           "type": "raw"
         },
         {
-          "file": "snow_black_32.pdc",
-          "name": "SNOW_BLACK_32",
-          "type": "raw"
-        },
-        {
-          "file": "snow_white_32.pdc",
-          "name": "SNOW_WHITE_32",
-          "type": "raw"
-        },
-        {
           "file": "storm_black_16.pdc",
           "name": "STORM_BLACK_16",
           "type": "raw"
@@ -174,16 +144,6 @@
         {
           "file": "storm_white_16.pdc",
           "name": "STORM_WHITE_16",
-          "type": "raw"
-        },
-        {
-          "file": "storm_black_32.pdc",
-          "name": "STORM_BLACK_32",
-          "type": "raw"
-        },
-        {
-          "file": "storm_white_32.pdc",
-          "name": "STORM_WHITE_32",
           "type": "raw"
         },
         {
@@ -197,16 +157,6 @@
           "type": "raw"
         },
         {
-          "file": "sun_black_32.pdc",
-          "name": "SUN_BLACK_32",
-          "type": "raw"
-        },
-        {
-          "file": "sun_white_32.pdc",
-          "name": "SUN_WHITE_32",
-          "type": "raw"
-        },
-        {
           "file": "sun_cloud_black_16.pdc",
           "name": "SUN_CLOUD_BLACK_16",
           "type": "raw"
@@ -214,6 +164,116 @@
         {
           "file": "sun_cloud_white_16.pdc",
           "name": "SUN_CLOUD_WHITE_16",
+          "type": "raw"
+        },
+        {
+          "file": "cloud_black_24.pdc",
+          "name": "CLOUD_BLACK_24",
+          "type": "raw"
+        },
+        {
+          "file": "cloud_white_24.pdc",
+          "name": "CLOUD_WHITE_24",
+          "type": "raw"
+        },
+        {
+          "file": "rain_black_24.pdc",
+          "name": "RAIN_BLACK_24",
+          "type": "raw"
+        },
+        {
+          "file": "rain_white_24.pdc",
+          "name": "RAIN_WHITE_24",
+          "type": "raw"
+        },
+        {
+          "file": "snow_black_24.pdc",
+          "name": "SNOW_BLACK_24",
+          "type": "raw"
+        },
+        {
+          "file": "snow_white_24.pdc",
+          "name": "SNOW_WHITE_24",
+          "type": "raw"
+        },
+        {
+          "file": "storm_black_24.pdc",
+          "name": "STORM_BLACK_24",
+          "type": "raw"
+        },
+        {
+          "file": "storm_white_24.pdc",
+          "name": "STORM_WHITE_24",
+          "type": "raw"
+        },
+        {
+          "file": "sun_black_24.pdc",
+          "name": "SUN_BLACK_24",
+          "type": "raw"
+        },
+        {
+          "file": "sun_white_24.pdc",
+          "name": "SUN_WHITE_24",
+          "type": "raw"
+        },
+        {
+          "file": "sun_cloud_black_24.pdc",
+          "name": "SUN_CLOUD_BLACK_24",
+          "type": "raw"
+        },
+        {
+          "file": "sun_cloud_white_24.pdc",
+          "name": "SUN_CLOUD_WHITE_24",
+          "type": "raw"
+        },
+        {
+          "file": "cloud_black_32.pdc",
+          "name": "CLOUD_BLACK_32",
+          "type": "raw"
+        },
+        {
+          "file": "cloud_white_32.pdc",
+          "name": "CLOUD_WHITE_32",
+          "type": "raw"
+        },
+        {
+          "file": "rain_black_32.pdc",
+          "name": "RAIN_BLACK_32",
+          "type": "raw"
+        },
+        {
+          "file": "rain_white_32.pdc",
+          "name": "RAIN_WHITE_32",
+          "type": "raw"
+        },
+        {
+          "file": "snow_black_32.pdc",
+          "name": "SNOW_BLACK_32",
+          "type": "raw"
+        },
+        {
+          "file": "snow_white_32.pdc",
+          "name": "SNOW_WHITE_32",
+          "type": "raw"
+        },
+        {
+          "file": "storm_black_32.pdc",
+          "name": "STORM_BLACK_32",
+          "type": "raw"
+        },
+        {
+          "file": "storm_white_32.pdc",
+          "name": "STORM_WHITE_32",
+          "type": "raw"
+        },
+        {
+          "file": "sun_black_32.pdc",
+          "name": "SUN_BLACK_32",
+          "type": "raw"
+        },
+        {
+          "file": "sun_white_32.pdc",
+          "name": "SUN_WHITE_32",
           "type": "raw"
         },
         {

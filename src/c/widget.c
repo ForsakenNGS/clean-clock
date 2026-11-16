@@ -160,6 +160,8 @@ int16_t widget_get_center_width(ElementType type) {
 int16_t widget_get_icon_size(void) {
 #if defined(PBL_PLATFORM_EMERY)
   return 32;
+#elif defined(PBL_PLATFORM_BASALT)
+  return 24;
 #else
   return 16;
 #endif
@@ -167,6 +169,8 @@ int16_t widget_get_icon_size(void) {
 
 int16_t widget_get_padding_horizontal(void) {
 #if defined(PBL_PLATFORM_EMERY)
+  return 4;
+#elif defined(PBL_PLATFORM_BASALT)
   return 4;
 #else
   return 2;
@@ -176,6 +180,8 @@ int16_t widget_get_padding_horizontal(void) {
 int16_t widget_get_padding_vertical(const WidgetConfig config) {
 #if defined(PBL_PLATFORM_EMERY)
   return 6;
+#elif defined(PBL_PLATFORM_BASALT)
+  return 6;
 #else
   return 3;
 #endif
@@ -183,6 +189,8 @@ int16_t widget_get_padding_vertical(const WidgetConfig config) {
 
 int16_t widget_get_accent_height(void) {
 #if defined(PBL_PLATFORM_EMERY)
+  return 2;
+#elif defined(PBL_PLATFORM_BASALT)
   return 2;
 #else
   return 2;
@@ -225,12 +233,16 @@ uint32_t widget_weather_icon_for_color(int condition, GColor color_primary) {
     case 1: // Clear night
       #if defined(PBL_PLATFORM_EMERY)
       return is_dark ? RESOURCE_ID_SUN_BLACK_32 : RESOURCE_ID_SUN_WHITE_32;
+      #elif defined(PBL_PLATFORM_BASALT)
+      return is_dark ? RESOURCE_ID_SUN_BLACK_24 : RESOURCE_ID_SUN_WHITE_24;
       #else
       return is_dark ? RESOURCE_ID_SUN_BLACK_16 : RESOURCE_ID_SUN_WHITE_16;
       #endif
     case 2: // Cloudy day
       #if defined(PBL_PLATFORM_EMERY)
       return is_dark ? RESOURCE_ID_CLOUD_BLACK_32 : RESOURCE_ID_CLOUD_WHITE_32;
+      #elif defined(PBL_PLATFORM_BASALT)
+      return is_dark ? RESOURCE_ID_CLOUD_BLACK_24 : RESOURCE_ID_CLOUD_WHITE_24;
       #else
       return is_dark ? RESOURCE_ID_CLOUD_BLACK_16 : RESOURCE_ID_CLOUD_WHITE_16;
       #endif
@@ -238,6 +250,8 @@ uint32_t widget_weather_icon_for_color(int condition, GColor color_primary) {
     case 5: // Light rain
       #if defined(PBL_PLATFORM_EMERY)
       return is_dark ? RESOURCE_ID_RAIN_BLACK_32 : RESOURCE_ID_RAIN_WHITE_32;
+      #elif defined(PBL_PLATFORM_BASALT)
+      return is_dark ? RESOURCE_ID_RAIN_BLACK_24 : RESOURCE_ID_RAIN_WHITE_24;
       #else
       return is_dark ? RESOURCE_ID_RAIN_BLACK_16 : RESOURCE_ID_RAIN_WHITE_16;
       #endif
@@ -246,6 +260,8 @@ uint32_t widget_weather_icon_for_color(int condition, GColor color_primary) {
     case 9: // Raining and snowing
       #if defined(PBL_PLATFORM_EMERY)
       return is_dark ? RESOURCE_ID_SNOW_BLACK_32 : RESOURCE_ID_SNOW_WHITE_32;
+      #elif defined(PBL_PLATFORM_BASALT)
+      return is_dark ? RESOURCE_ID_SNOW_BLACK_24 : RESOURCE_ID_SNOW_WHITE_24;
       #else
       return is_dark ? RESOURCE_ID_SNOW_BLACK_16 : RESOURCE_ID_SNOW_WHITE_16;
       #endif
@@ -254,12 +270,16 @@ uint32_t widget_weather_icon_for_color(int condition, GColor color_primary) {
     case 8: // Partly cloudy day
       #if defined(PBL_PLATFORM_EMERY)
       return is_dark ? RESOURCE_ID_SUN_CLOUD_BLACK_32 : RESOURCE_ID_SUN_CLOUD_WHITE_32;
+      #elif defined(PBL_PLATFORM_BASALT)
+      return is_dark ? RESOURCE_ID_SUN_CLOUD_BLACK_24 : RESOURCE_ID_SUN_CLOUD_WHITE_24;
       #else
       return is_dark ? RESOURCE_ID_SUN_CLOUD_BLACK_16 : RESOURCE_ID_SUN_CLOUD_WHITE_16;
       #endif
     case 10: // Thunderstorm
       #if defined(PBL_PLATFORM_EMERY)
       return is_dark ? RESOURCE_ID_STORM_BLACK_32 : RESOURCE_ID_STORM_WHITE_32;
+      #elif defined(PBL_PLATFORM_BASALT)
+      return is_dark ? RESOURCE_ID_STORM_BLACK_24 : RESOURCE_ID_STORM_WHITE_24;
       #else
       return is_dark ? RESOURCE_ID_STORM_BLACK_16 : RESOURCE_ID_STORM_WHITE_16;
       #endif

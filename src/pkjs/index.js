@@ -67,16 +67,6 @@ function sendSettings(settings) {
   });
 }
 
-function weatherIconFromYahoo(code) {
-  code = parseInt(code, 10);
-  if (code <= 4 || (code >= 37 && code <= 39) || code === 45) return 3;
-  if ((code >= 5 && code <= 12) || code === 35) return 2;
-  if ((code >= 13 && code <= 16) || (code >= 41 && code <= 43) || code === 46) return 4;
-  if (code >= 19 && code <= 22) return 5;
-  if ((code >= 26 && code <= 30) || code === 44) return 1;
-  return 0;
-}
-
 Pebble.addEventListener('ready', function() {
   console.log('PKJS ready');
   const settings = getSettings();

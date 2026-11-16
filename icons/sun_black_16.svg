@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" version="1.1" id="svg1">
+  <defs id="defs1" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 11.2 8 L 11.0704 8.90153 L 10.692 9.73003 L 10.0956 10.4184 L 9.32935 10.9108 L 8.45543 11.1674 L 7.54462 11.1674 L 6.67071 10.9108 L 5.90448 10.4184 L 5.30801 9.73009 L 4.92964 8.90159 L 4.8 8 L 4.92962 7.09847 L 5.30798 6.26997 L 5.90443 5.58162 L 6.67065 5.08919 L 7.54457 4.83257 L 8.45538 4.83257 L 9.32929 5.08916 L 10.0955 5.58157 L 10.692 6.26991 L 11.0704 7.09841 L 11.2 8 L 11.2 8" id="path9" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 3.7568 3.7568 L 3.3328 3.3328 L 2.9088 2.9088" id="path8" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 13.0912 13.0912 L 12.6672 12.6672 L 12.2432 12.2432" id="path7" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 2.9088 13.0912 L 3.3328 12.6672 L 3.7568 12.2432" id="path6" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 12.2424 3.7576 L 12.6668 3.3332 L 13.0912 2.9088" id="path5" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 2 8 L 1.4 8 L 0.8 8" id="path4" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 15.2 8 L 14.6 8 L 14 8" id="path3" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 8 15.2 L 8 14.6 L 8 14" id="path2" />
+  <path style="stroke-opacity:1;stroke:black;stroke-width:1" d="M 8 2 L 8 1.4 L 8 0.8" id="path1" />
+</svg>

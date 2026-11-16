@@ -30,15 +30,23 @@ RESOURCES_DIR = os.path.join(PROJECT_ROOT, "resources")
 
 FCTX_COMPILER = os.path.join(PROJECT_ROOT, "node_modules", ".bin", "fctx-compiler")
 
-# Characters needed for the digital time display.
-CHARS = "0123456789:"
+# Characters needed for the digital time display. This is the default set
+# used by every font unless a FONT_SOURCES entry overrides it with its own
+# "chars" value.
+DEFAULT_CHARS = "0123456789:"
+FULL_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-/,.:°%"
 
-# TTF source -> (font id used in <font id="...">)
-# Add new fonts here; the output resource basename is derived from the ttf name.
+# TTF source configuration. Each entry declares:
+#   ttf   - the TTF file in fonts/
+#   id    - the font id used in <font id="..."> of the intermediate SVG
+#   chars - the exact characters to convert for this font (optional, falls
+#           back to DEFAULT_CHARS). Listing them per font lets different
+#           fonts ship different glyph sets.
 FONT_SOURCES = [
-    ("Teko-Light.ttf", "Teko"),
-    ("BarlowCondensed-Regular.ttf", "Barlow"),
-    ("BebasNeue-Regular.ttf", "BebasNeue"),
+    {"ttf": "Teko-Light.ttf", "id": "Teko"},
+    {"ttf": "BarlowCondensed-Regular.ttf", "id": "Barlow"},
+    {"ttf": "BebasNeue-Regular.ttf", "id": "BebasNeue"},
+    {"ttf": "BarlowCondensed-Regular.ttf", "id": "BarlowFull", "chars": FULL_CHARS},
 ]
 
 
@@ -47,7 +55,7 @@ def svg_name(ttf_name):
     return os.path.splitext(ttf_name)[0].replace(" ", "").replace("'", "") + ".svg"
 
 
-def build_svg_font(ttf_path, svg_path, font_id):
+def build_svg_font(ttf_path, svg_path, font_id, chars):
     font = TTFont(ttf_path)
     head = font["head"]
     hhea = font["hhea"]
@@ -77,7 +85,7 @@ def build_svg_font(ttf_path, svg_path, font_id):
             font_id, upem, hhea.ascent, hhea.descent, cap_height))
     lines.append("      />")
 
-    for ch in CHARS:
+    for ch in chars:
         code = ord(ch)
         name = cmap.get(code)
         if name is None:
@@ -127,13 +135,16 @@ def main():
     os.makedirs(SVG_OUT_DIR, exist_ok=True)
 
     any_failed = False
-    for ttf_name, font_id in FONT_SOURCES:
+    for source in FONT_SOURCES:
+        ttf_name = source["ttf"]
+        font_id = source["id"]
+        chars = source.get("chars") or DEFAULT_CHARS
         ttf_path = os.path.join(FONTS_DIR, ttf_name)
         if not os.path.exists(ttf_path):
             print("WARNING: not found, skipping: %s" % ttf_path, file=sys.stderr)
             continue
         svg_path = os.path.join(SVG_OUT_DIR, svg_name(ttf_name))
-        build_svg_font(ttf_path, svg_path, font_id)
+        build_svg_font(ttf_path, svg_path, font_id, chars)
         if not compile_svg(svg_path):
             any_failed = True
 

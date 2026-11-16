@@ -102,6 +102,11 @@
           "type": "raw"
         },
         {
+          "file": "BarlowFull.ffont",
+          "name": "BARLOW_FULL",
+          "type": "raw"
+        },
+        {
           "file": "cloud_black_24.pdc",
           "name": "CLOUD_BLACK_24",
           "type": "raw"

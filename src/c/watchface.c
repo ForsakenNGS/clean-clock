@@ -21,6 +21,7 @@ static void watchface_inbox_dropped(AppMessageResult reason, void *context) {
 
 void watchface_init(void) {
   s_window = window_create();
+  s_watchface.bar_ffont = NULL;
   settings_init();
   window_set_window_handlers(s_window, (WindowHandlers) {
     .load = watchface_load,
@@ -51,13 +52,7 @@ void watchface_deinit(void) {
 void watchface_load(Window *window) {
   ClaySettings *s = settings_get();
   s_watchface.root_layer = window_get_root_layer(window);
-#if defined(PBL_PLATFORM_EMERY)
-  s_watchface.bar_font = fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK);
-  s_watchface.bar_font_small = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
-#else
-  s_watchface.bar_font = fonts_get_system_font(FONT_KEY_GOTHIC_28);
-  s_watchface.bar_font_small = fonts_get_system_font(FONT_KEY_GOTHIC_14);
-#endif
+  s_watchface.bar_ffont = ffont_create_from_resource(RESOURCE_ID_BARLOW_FULL);
   bar_load(&s_watchface.top, s_watchface.root_layer, BAR_LOCATION_TOP, s->top);
   const GColor color_primary = watchface_color(s->time_primary_color);
   const GColor color_secondary = watchface_color(s->time_secondary_color);
@@ -86,6 +81,7 @@ void watchface_unload(Window *window) {
   bar_unload(&s_watchface.top);
   time_unload(&s_watchface.time);
   bar_unload(&s_watchface.bottom);
+  ffont_destroy(s_watchface.bar_ffont);
 }
 
 void watchface_refresh(void) {
@@ -181,12 +177,8 @@ void watchface_apply_health_subscription(void) {
   }
 }
 
-GFont watchface_bar_font(void) {
-  return s_watchface.bar_font;
-}
-
-GFont watchface_bar_font_small(void) {
-  return s_watchface.bar_font_small;
+FFont* watchface_bar_ffont(void) {
+  return s_watchface.bar_ffont;
 }
 
 int16_t watchface_bar_height(void) {

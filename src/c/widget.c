@@ -1,6 +1,7 @@
 #include "time.h"
 #include "widget.h"
 #include "bar.h"
+#include "text.h"
 #include "watchface.h"
 
 static char widget_temp[16];
@@ -19,18 +20,17 @@ static const char *widget_month(int mon) {
 static void widget_update_layer(Layer *layer, GContext *ctx) {
   WidgetData *d = (WidgetData*)layer_get_data(layer);
   GRect bounds = layer_get_bounds(layer);
+  GColor text_color = d->config.color_primary;
   // Draw background and accents
   if (d->config.location == WIDGET_LOCATION_CENTER) {
     #ifdef PBL_COLOR
-    graphics_context_set_text_color(ctx, d->config.color_primary);
     graphics_context_set_fill_color(ctx, d->config.color_accent);
     #else
-    graphics_context_set_text_color(ctx, d->config.color_secondary);
+    text_color = d->config.color_secondary;
     graphics_context_set_fill_color(ctx, d->config.color_primary);
     #endif
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
   } else {
-    graphics_context_set_text_color(ctx, d->config.color_primary);
     graphics_context_set_fill_color(ctx, d->config.color_secondary);
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
     #ifdef PBL_COLOR
@@ -46,21 +46,21 @@ static void widget_update_layer(Layer *layer, GContext *ctx) {
     }
   }
   // Draw text
-  graphics_draw_text(ctx, d->buffer, widget_font(d->config), d->text_bounds, GTextOverflowModeTrailingEllipsis, widget_font_align(d->config), NULL);
+  FFont* font = watchface_bar_ffont();
+  if (font != NULL) {
+    GRect text_bounds = layer_convert_rect_to_screen(layer, d->text_bounds);
+    text_render_fit(ctx, text_bounds, d->buffer, font, text_color, GTextAlignmentCenter);
+  }
   // Draw weather icons
   if (d->icon_pdc != NULL) {
-    #if defined(PBL_PLATFORM_EMERY)
-    const int16_t icon_size = 32;
-    #else
-    const int16_t icon_size = 24;
-    #endif
+    const int16_t icon_size = widget_get_icon_size();
     GPoint icon_pos = GPoint((bounds.size.w - icon_size) / 2, (bounds.size.h - icon_size) / 2);
     switch (d->config.location) {
       case WIDGET_LOCATION_LEFT:
-        icon_pos.x = d->text_bounds.origin.x + d->text_bounds.size.w - icon_size;
+        icon_pos.x = d->text_bounds.origin.x + d->text_bounds.size.w;
         break;
       case WIDGET_LOCATION_RIGHT:
-        icon_pos.x = d->text_bounds.origin.x;
+        icon_pos.x = d->text_bounds.origin.x - icon_size;
         break;
       default:
         break;
@@ -124,6 +124,17 @@ bool widget_is_weather(Widget *widget) {
   }
 }
 
+bool widget_has_icon(Widget *widget) {
+  switch (widget->data->config.type) {
+    case ELEMENT_WEATHER_CURRENT:
+    case ELEMENT_WEATHER_TODAY:
+    case ELEMENT_WEATHER_TOMORROW:
+      return true;
+    default:
+      return false;
+  }
+}
+
 /**
  * Get the width of the given element type if positioned in the center
  */
@@ -141,6 +152,14 @@ int16_t widget_get_center_width(ElementType type) {
 #endif
 }
 
+int16_t widget_get_icon_size(void) {
+#if defined(PBL_PLATFORM_EMERY)
+  return 32;
+#else
+  return 24;
+#endif
+}
+
 int16_t widget_get_padding_horizontal(void) {
 #if defined(PBL_PLATFORM_EMERY)
   return 4;
@@ -151,17 +170,9 @@ int16_t widget_get_padding_horizontal(void) {
 
 int16_t widget_get_padding_vertical(const WidgetConfig config) {
 #if defined(PBL_PLATFORM_EMERY)
-  if (widget_has_small_font(config)) {
-      return 8;
-  } else {
-      return 2;
-  }
+  return 6;
 #else
-  if (widget_has_small_font(config)) {
-      return 10;
-  } else {
-      return 0;
-  }
+  return 4;
 #endif
 }
 
@@ -173,37 +184,21 @@ int16_t widget_get_accent_height(void) {
 #endif
 }
 
-bool widget_has_small_font(const WidgetConfig config) {
-  switch (config.type) {
-    case ELEMENT_BATTERY:
-    case ELEMENT_WEATHER_CURRENT:
-    case ELEMENT_WEATHER_TODAY:
-    case ELEMENT_WEATHER_TODAY_MIN_MAX:
-    case ELEMENT_WEATHER_TOMORROW:
-    case ELEMENT_WEATHER_TOMORROW_MIN_MAX:
-      return true;
-    default:
-      return false;
-  }
-}
-
-GFont widget_font(const WidgetConfig config) {
-  if (widget_has_small_font(config)) {
-      return watchface_bar_font_small();
+GRect widget_get_text_bounds(Widget *widget) {
+  const GRect widget_bounds = layer_get_bounds(widget->layer);
+  int16_t px = widget_get_padding_horizontal();
+  int16_t py = widget_get_padding_vertical(widget->data->config);
+  if (widget_has_icon(widget)) {
+    const int16_t icon_size = widget_get_icon_size();
+    switch (widget->data->config.location) {
+      default:
+      case WIDGET_LOCATION_LEFT:
+        return GRect(px, py, widget_bounds.size.w - px * 2 - icon_size, widget_bounds.size.h - py * 2);
+      case WIDGET_LOCATION_RIGHT:
+        return GRect(px + icon_size, py, widget_bounds.size.w - px * 2 - icon_size, widget_bounds.size.h - py * 2);
+    }
   } else {
-      return watchface_bar_font();
-  }
-}
-
-GTextAlignment widget_font_align(const WidgetConfig config) {
-  switch (config.location) {
-    default:
-    case WIDGET_LOCATION_LEFT:
-      return GTextAlignmentLeft;
-    case WIDGET_LOCATION_CENTER:
-      return GTextAlignmentCenter;
-    case WIDGET_LOCATION_RIGHT:
-      return GTextAlignmentRight;
+    return GRect(px, py, widget_bounds.size.w - px * 2, widget_bounds.size.h - py * 2);
   }
 }
 
@@ -314,10 +309,9 @@ void widget_load_settings(Widget *widget, Layer *bar_layer, const WidgetConfig c
   }
   const GRect widget_bounds = GRect(left, 0, width, watchface_bar_height());
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget rect: (%d, %d, %d, %d)", widget_bounds.origin.x, widget_bounds.origin.y, widget_bounds.size.w, widget_bounds.size.h);
+  layer_set_frame(widget->layer, widget_bounds);
   // Recalculate text bounds
-  int16_t px = widget_get_padding_horizontal();
-  int16_t py = widget_get_padding_vertical(config);
-  widget->data->text_bounds = GRect(px, py, widget_bounds.size.w - px * 2, widget_bounds.size.h - py * 2);
+  widget->data->text_bounds = widget_get_text_bounds(widget);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget text rect: (%d, %d, %d, %d)", widget->data->text_bounds.origin.x, widget->data->text_bounds.origin.y, widget->data->text_bounds.size.w, widget->data->text_bounds.size.h);
   // Update widget layer bounds
   if (config.type == ELEMENT_NONE) {
@@ -325,7 +319,6 @@ void widget_load_settings(Widget *widget, Layer *bar_layer, const WidgetConfig c
   } else {
     layer_set_hidden(widget->layer, false);
   }
-  layer_set_frame(widget->layer, widget_bounds);
 }
 
 void widget_unload(Widget *widget) {

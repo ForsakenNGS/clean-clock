@@ -4,8 +4,7 @@
 
 typedef struct {
   Layer *root_layer;
-  GFont bar_font;
-  GFont bar_font_small;
+  FFont *bar_ffont;
   TimeSection time;
   BarSection top;
   BarSection bottom;
@@ -25,7 +24,6 @@ void watchface_apply_subscriptions(void);
 void watchface_apply_tick_subscription(void);
 void watchface_apply_battery_subscription(void);
 void watchface_apply_health_subscription(void);
-GFont watchface_bar_font(void);
-GFont watchface_bar_font_small(void);
+FFont* watchface_bar_ffont(void);
 int16_t watchface_bar_height(void);
 int16_t watchface_time_height(void);

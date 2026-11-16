@@ -39,14 +39,13 @@ bool widget_is_battery(Widget *widget);
 bool widget_is_health(Widget *widget);
 bool widget_is_time(Widget *widget);
 bool widget_is_weather(Widget *widget);
-
+bool widget_has_icon(Widget *widget);
 int16_t widget_get_center_width(ElementType type);
+int16_t widget_get_icon_size(void);
 int16_t widget_get_padding_horizontal(void);
 int16_t widget_get_padding_vertical(const WidgetConfig config);
 int16_t widget_get_accent_height(void);
-bool widget_has_small_font(const WidgetConfig config);
-GFont widget_font(const WidgetConfig config);
-GTextAlignment widget_font_align(const WidgetConfig config);
+GRect widget_get_text_bounds(Widget *widget);
 uint32_t widget_weather_icon(int condition);
 uint32_t widget_weather_icon_for_color(int condition, GColor color_primary);
 

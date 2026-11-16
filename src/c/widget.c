@@ -38,7 +38,7 @@ static void widget_update_layer(Layer *layer, GContext *ctx) {
     #else
     graphics_context_set_fill_color(ctx, d->config.color_primary);
     #endif
-    const int16_t accent_height = widget_get_accent_height();
+    const int16_t accent_height = watchface_accent_height();
     if (d->config.bar == BAR_LOCATION_TOP) {
       graphics_fill_rect(ctx, GRect(0, bounds.size.h - accent_height, bounds.size.w, accent_height), 0, GCornerNone);
     } else {
@@ -184,16 +184,6 @@ int16_t widget_get_padding_vertical(const WidgetConfig config) {
   return 6;
 #else
   return 3;
-#endif
-}
-
-int16_t widget_get_accent_height(void) {
-#if defined(PBL_PLATFORM_EMERY)
-  return 2;
-#elif defined(PBL_PLATFORM_BASALT)
-  return 2;
-#else
-  return 2;
 #endif
 }
 

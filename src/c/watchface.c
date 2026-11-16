@@ -189,6 +189,16 @@ int16_t watchface_bar_height(void) {
 #endif
 }
 
+int16_t watchface_accent_height(void) {
+#if defined(PBL_PLATFORM_EMERY)
+  return 2;
+#elif defined(PBL_PLATFORM_BASALT)
+  return 2;
+#else
+  return 2;
+#endif
+}
+
 int16_t watchface_time_height(void) {
 #if defined(PBL_PLATFORM_EMERY)
   return 132;

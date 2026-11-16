@@ -44,7 +44,6 @@ int16_t widget_get_center_width(ElementType type);
 int16_t widget_get_icon_size(void);
 int16_t widget_get_padding_horizontal(void);
 int16_t widget_get_padding_vertical(const WidgetConfig config);
-int16_t widget_get_accent_height(void);
 GRect widget_get_text_bounds(Widget *widget);
 uint32_t widget_weather_icon(int condition);
 uint32_t widget_weather_icon_for_color(int condition, GColor color_primary);

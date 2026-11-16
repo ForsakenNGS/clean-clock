@@ -26,4 +26,5 @@ void watchface_apply_battery_subscription(void);
 void watchface_apply_health_subscription(void);
 FFont* watchface_bar_ffont(void);
 int16_t watchface_bar_height(void);
+int16_t watchface_accent_height(void);
 int16_t watchface_time_height(void);

@@ -6,13 +6,28 @@ static char time_temp[8];
 
 static void time_update_layer(Layer *layer, GContext *ctx) {
   TimeSectionData *d = (TimeSectionData*)layer_get_data(layer);
-  if (!d->font) return;
-
   GRect bounds = layer_get_bounds(layer);
+  const uint16_t px = 4;
+  const uint16_t py = 4;
+  const uint16_t left = px;
+  const uint16_t width = bounds.size.w - px * 2;
+  // Render background
   graphics_context_set_fill_color(ctx, d->config.color_secondary);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-  GRect text_bounds = GRect(4, watchface_bar_height() + 2, bounds.size.w - 8, bounds.size.h - 4);
-  text_render_fit(ctx, text_bounds, d->buffer, d->font, d->config.color_primary, GTextAlignmentCenter);
+  // Render accent lines
+  const uint16_t accent_height = watchface_accent_height();
+  const GRect accent_top = GRect(left, py - accent_height, width, accent_height);
+  const GRect accent_bottom = GRect(left, bounds.size.h - py, width, accent_height);
+  graphics_context_set_fill_color(ctx, d->config.color_accent);
+  graphics_fill_rect(ctx, accent_top, 0, GCornerNone);
+  graphics_fill_rect(ctx, accent_bottom, 0, GCornerNone);
+  // Render text
+  if (d->font) {
+    GRect text_bounds = GRect(left, watchface_bar_height() + py, width, bounds.size.h - py * 2);
+    text_render_fit(ctx, text_bounds, d->buffer, d->font, d->config.color_primary, GTextAlignmentCenter);
+  } else {
+    // TODO: Implement fallback using system font
+  }
 }
 
 TimeConfig time_config(const GColor color_primary, const GColor color_secondary, const GColor color_accent, const TimeFont font) {

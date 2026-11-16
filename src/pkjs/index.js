@@ -79,14 +79,16 @@ function weatherIconFromYahoo(code) {
 
 Pebble.addEventListener('ready', function() {
   console.log('PKJS ready');
-  sendSettings(getSettings());
-  weather.updateWeather();
+  const settings = getSettings();
+  sendSettings(settings);
+  weather.updateWeather(settings.WEATHER_INTERVAL);
 });
 
 Pebble.addEventListener('appmessage', function(e) {
   console.log('AppMessage received: ' + JSON.stringify(e.payload || {}));
   if (e.payload && e.payload[keys.READY] !== undefined) {
-    weather.updateWeather();
+    const settings = getSettings();
+    weather.updateWeather(settings.WEATHER_INTERVAL);
   }
 });
 
@@ -102,7 +104,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
     var settings = JSON.parse(decodeURIComponent(e.response));
     localStorage.setItem('clay-settings', JSON.stringify(settings));
     sendSettings(settings);
-    weather.updateWeather(true);
+    weather.updateWeather(settings.WEATHER_INTERVAL, true);
   } catch (err) {
     console.log('Config parse error: ' + err);
   }

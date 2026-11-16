@@ -17,7 +17,6 @@ var currentFailures = 0;
 // the watchface relaunches every time the user leaves an app, and both the
 // launch and the watch's hourly ping ask for weather; anything fetched more
 // recently than this is still fresh enough, unless the update is forced
-var MIN_FETCH_INTERVAL_MS = 15 * 60 * 1000;
 var LAST_FETCH_KEY = 'weather_last_fetch';
 
 // icon codes for sending weather icons to pebble
@@ -47,9 +46,9 @@ function getCurrentWeatherProvider() {
   }
 }
 
-function fetchedRecently() {
+function fetchedRecently(updateInterval) {
   var lastFetch = Number(window.localStorage.getItem(LAST_FETCH_KEY));
-  return lastFetch > 0 && (Date.now() - lastFetch) < MIN_FETCH_INTERVAL_MS;
+  return lastFetch > 0 && (Date.now() - lastFetch) < (updateInterval * 3600 * 1000);
 }
 
 // today's sunrise/sunset at pos, in minutes after the phone's local
@@ -69,7 +68,7 @@ function getSunTimes(pos) {
 // sun times computed for the update in progress, sent along with the weather
 var pendingSunTimes = null;
 
-function updateWeather(forceUpdate) {
+function updateWeather(updateInterval, forceUpdate) {
   var weatherDisabled = window.localStorage.getItem('disable_weather') === 'yes';
   var sunDisabled = window.localStorage.getItem('disable_sun') === 'yes';
 

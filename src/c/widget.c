@@ -371,6 +371,7 @@ void widget_update_health(Widget *widget, HealthEventType event, void *context) 
 #else
       snprintf(widget_temp, sizeof(widget_temp), "--");
 #endif
+      break;
     default:
       return;
   }

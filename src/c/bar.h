@@ -3,7 +3,7 @@
 #include "widget.h"
 
 typedef struct {
-  Layer *layer;
+  GRect bounds;
   BarLocation location;
   Widget left;
   Widget center;
@@ -13,5 +13,6 @@ typedef struct {
 void bar_load(BarSection *section, Layer *root_layer, const BarLocation location, const BarSettings bs);
 void bar_load_settings(BarSection *section, const BarSettings bs);
 void bar_unload(BarSection *section);
+void bar_update_layer(BarSection *section, Layer *layer, GContext *ctx);
 void bar_refresh(BarSection *section);
 int16_t bar_get_widget_width(const BarSettings bs, const WidgetLocation location, const GRect bounds);

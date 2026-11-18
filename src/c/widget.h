@@ -23,16 +23,13 @@ typedef struct {
 } WidgetConfig;
 
 typedef struct {
+  bool redraw_due;
+  GRect bounds;
   GRect text_bounds;
   WidgetConfig config;
   char buffer[16];
   uint32_t icon;
   GDrawCommandImage* icon_pdc;
-} WidgetData;
-
-typedef struct {
-  Layer *layer;
-  WidgetData *data;
 } Widget;
 
 bool widget_is_battery(Widget *widget);
@@ -49,12 +46,15 @@ uint32_t widget_weather_icon(int condition);
 uint32_t widget_weather_icon_for_color(int condition, GColor color_primary);
 
 WidgetConfig widget_config(const BarLocation bar, const WidgetLocation location, const ElementType type, const GColor color_primary, const GColor color_secondary, const GColor color_accent);
-void widget_load(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width);
-void widget_load_settings(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width);
+GRect widget_rect(Widget *widget, int16_t x, int16_t y, int16_t w, int16_t h);
+void widget_load(Widget *widget, const GRect bounds, const WidgetConfig config, const int16_t width);
+void widget_load_settings(Widget *widget, const GRect bounds, const WidgetConfig config, const int16_t width);
 void widget_unload(Widget *widget);
+void widget_update_layer(Widget* widget, Layer *layer, GContext *ctx);
 void widget_update_any(Widget *widget);
 void widget_update_battery(Widget *widget, BatteryChargeState charge);
 void widget_update_health(Widget *widget, HealthEventType event, void *context);
 void widget_update_time(Widget *widget, struct tm *t, TimeUnits units_changed);
 void widget_update_weather(Widget *widget);
 void widget_refresh(Widget *widget);
+void widget_redraw(Widget *widget);

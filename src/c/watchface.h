@@ -17,6 +17,7 @@ void watchface_load(Window *window);
 void watchface_load_settings(void);
 void watchface_unload(Window *window);
 void watchface_refresh(void);
+void watchface_redraw(void);
 TimeUnits watchface_update_time_units();
 void watchface_update_weather(void);
 bool watchface_has_element_of_type(const ElementType type);

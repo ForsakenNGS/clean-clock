@@ -17,94 +17,37 @@ static const char *widget_month(int mon) {
   return names[mon % 12];
 }
 
-static void widget_update_layer(Layer *layer, GContext *ctx) {
-  WidgetData *d = (WidgetData*)layer_get_data(layer);
-  GRect bounds = layer_get_bounds(layer);
-  GColor text_color = d->config.color_primary;
-  // Draw background and accents
-  if (d->config.location == WIDGET_LOCATION_CENTER) {
-    #ifdef PBL_COLOR
-    graphics_context_set_fill_color(ctx, d->config.color_accent);
-    #else
-    text_color = d->config.color_secondary;
-    graphics_context_set_fill_color(ctx, d->config.color_primary);
-    #endif
-    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-  } else {
-    graphics_context_set_fill_color(ctx, d->config.color_secondary);
-    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-    #ifdef PBL_COLOR
-    graphics_context_set_fill_color(ctx, d->config.color_accent);
-    #else
-    graphics_context_set_fill_color(ctx, d->config.color_primary);
-    #endif
-    const int16_t accent_height = watchface_accent_height();
-    if (d->config.bar == BAR_LOCATION_TOP) {
-      graphics_fill_rect(ctx, GRect(0, bounds.size.h - accent_height, bounds.size.w, accent_height), 0, GCornerNone);
-    } else {
-      graphics_fill_rect(ctx, GRect(0, 0, bounds.size.w, accent_height), 0, GCornerNone);
-    }
-  }
-  // Draw text
-  FFont* font = watchface_bar_ffont();
-  if (font != NULL) {
-    GRect text_bounds = layer_convert_rect_to_screen(layer, d->text_bounds);
-    text_render_fit(ctx, text_bounds, d->buffer, font, text_color, GTextAlignmentCenter);
-  } else {
-    // Fallback if loading font fails (low memory devices)
-    const GFont font = fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21);
-    graphics_context_set_text_color(ctx, text_color);
-    graphics_draw_text(ctx, d->buffer, font, d->text_bounds, GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
-  }
-  // Draw weather icons
-  if (d->icon_pdc != NULL) {
-    const int16_t icon_size = widget_get_icon_size();
-    GPoint icon_pos = GPoint((bounds.size.w - icon_size) / 2, (bounds.size.h - icon_size) / 2);
-    switch (d->config.location) {
-      case WIDGET_LOCATION_LEFT:
-        icon_pos.x = d->text_bounds.origin.x + d->text_bounds.size.w;
-        break;
-      case WIDGET_LOCATION_RIGHT:
-        icon_pos.x = d->text_bounds.origin.x - icon_size;
-        break;
-      default:
-        break;
-    }
-    gdraw_command_image_draw(ctx, d->icon_pdc, icon_pos);
-  }
-}
-
 static void widget_update_text(Widget *widget) {
-  if (strcmp(widget->data->buffer, widget_temp) != 0) {
-    strncpy(widget->data->buffer, widget_temp, sizeof(widget->data->buffer));
-    layer_mark_dirty(widget->layer);
+  if (strcmp(widget->buffer, widget_temp) != 0) {
+    strncpy(widget->buffer, widget_temp, sizeof(widget->buffer));
+    widget_redraw(widget);
   }
 }
 
 static void widget_update_icon(Widget *widget) {
-  if (widget->data->icon != widget_temp_icon) {
-    widget->data->icon = widget_temp_icon;
-    if (widget->data->icon_pdc != NULL) {
-      gdraw_command_image_destroy(widget->data->icon_pdc);
-      widget->data->icon_pdc = NULL;
+  if (widget->icon != widget_temp_icon) {
+    widget->icon = widget_temp_icon;
+    if (widget->icon_pdc != NULL) {
+      gdraw_command_image_destroy(widget->icon_pdc);
+      widget->icon_pdc = NULL;
     }
-    if (widget->data->icon != UINT32_MAX) {
-      widget->data->icon_pdc = gdraw_command_image_create_with_resource(widget->data->icon);
+    if (widget->icon != UINT32_MAX) {
+      widget->icon_pdc = gdraw_command_image_create_with_resource(widget->icon);
     }
-    layer_mark_dirty(widget->layer);
+    widget_redraw(widget);
   }
 }
 
 bool widget_is_battery(Widget *widget) {
-  return (widget->data->config.type == ELEMENT_BATTERY);
+  return (widget->config.type == ELEMENT_BATTERY);
 }
 
 bool widget_is_health(Widget *widget) {
-  return (widget->data->config.type == ELEMENT_HEART_RATE);
+  return (widget->config.type == ELEMENT_HEART_RATE);
 }
 
 bool widget_is_time(Widget *widget) {
-  switch (widget->data->config.type) {
+  switch (widget->config.type) {
     case ELEMENT_DAY_OF_MONTH:
     case ELEMENT_WEEKDAY:
     case ELEMENT_MONTH:
@@ -117,7 +60,7 @@ bool widget_is_time(Widget *widget) {
 }
 
 bool widget_is_weather(Widget *widget) {
-  switch (widget->data->config.type) {
+  switch (widget->config.type) {
     case ELEMENT_WEATHER_CURRENT:
     case ELEMENT_WEATHER_TODAY:
     case ELEMENT_WEATHER_TODAY_MIN_MAX:
@@ -130,7 +73,7 @@ bool widget_is_weather(Widget *widget) {
 }
 
 bool widget_has_icon(Widget *widget) {
-  switch (widget->data->config.type) {
+  switch (widget->config.type) {
     case ELEMENT_WEATHER_CURRENT:
     case ELEMENT_WEATHER_TODAY:
     case ELEMENT_WEATHER_TOMORROW:
@@ -190,20 +133,20 @@ int16_t widget_get_padding_vertical(const WidgetConfig config) {
 }
 
 GRect widget_get_text_bounds(Widget *widget) {
-  const GRect widget_bounds = layer_get_bounds(widget->layer);
+  const GRect widget_bounds = widget->bounds;
   int16_t px = widget_get_padding_horizontal();
-  int16_t py = widget_get_padding_vertical(widget->data->config);
+  int16_t py = widget_get_padding_vertical(widget->config);
   if (widget_has_icon(widget)) {
     const int16_t icon_size = widget_get_icon_size();
-    switch (widget->data->config.location) {
+    switch (widget->config.location) {
       default:
       case WIDGET_LOCATION_LEFT:
-        return GRect(px, py, widget_bounds.size.w - px * 2 - icon_size, widget_bounds.size.h - py * 2);
+        return widget_rect(widget, px, py, widget_bounds.size.w - px * 2 - icon_size, widget_bounds.size.h - py * 2);
       case WIDGET_LOCATION_RIGHT:
-        return GRect(px + icon_size, py, widget_bounds.size.w - px * 2 - icon_size, widget_bounds.size.h - py * 2);
+        return widget_rect(widget, px + icon_size, py, widget_bounds.size.w - px * 2 - icon_size, widget_bounds.size.h - py * 2);
     }
   } else {
-    return GRect(px, py, widget_bounds.size.w - px * 2, widget_bounds.size.h - py * 2);
+    return widget_rect(widget, px, py, widget_bounds.size.w - px * 2, widget_bounds.size.h - py * 2);
   }
 }
 
@@ -289,8 +232,15 @@ WidgetConfig widget_config(const BarLocation bar, const WidgetLocation location,
   return config;
 }
 
-void widget_load(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width) {
-  GRect bounds = layer_get_bounds(bar_layer);
+GRect widget_rect(Widget *widget, int16_t x, int16_t y, int16_t w, int16_t h) {
+  return GRect(
+    widget->bounds.origin.x + x,
+    widget->bounds.origin.y + y,
+    w, h
+  );
+}
+
+void widget_load(Widget *widget, const GRect bounds, const WidgetConfig config, const int16_t width) {
   // Create widget segment
   int16_t left = 0;
   if (config.location == WIDGET_LOCATION_CENTER) {
@@ -298,52 +248,102 @@ void widget_load(Widget *widget, Layer *bar_layer, const WidgetConfig config, co
   } else if (config.location == WIDGET_LOCATION_RIGHT) {
     left = bounds.size.w - width;
   }
-  const GRect widget_bounds = GRect(left, 0, width, watchface_bar_height());
-  widget->layer = layer_create_with_data(
-    widget_bounds,
-    sizeof(WidgetData)
-  );
-  widget->data = (WidgetData*)layer_get_data(widget->layer);
-  widget_load_settings(widget, bar_layer, config, width);
-  layer_set_update_proc(widget->layer, widget_update_layer);
-  layer_add_child(bar_layer, widget->layer);
+  widget->bounds = GRect(bounds.origin.x + left, bounds.origin.y, width, watchface_bar_height());
+  widget_load_settings(widget, bounds, config, width);
 }
 
-void widget_load_settings(Widget *widget, Layer *bar_layer, const WidgetConfig config, const int16_t width) {
+void widget_load_settings(Widget *widget, const GRect bounds, const WidgetConfig config, const int16_t width) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget type: %d", config.type);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget width: %d", width);
   // Update config
-  widget->data->icon = UINT32_MAX; // UINT32_MAX -> no icon
-  widget->data->icon_pdc = NULL;
-  widget->data->config = config;
+  widget->icon = UINT32_MAX; // UINT32_MAX -> no icon
+  widget->icon_pdc = NULL;
+  widget->config = config;
   // Recalculate widget bounds
-  GRect bounds = layer_get_bounds(bar_layer);
   int16_t left = 0;
   if (config.location == WIDGET_LOCATION_CENTER) {
     left = (bounds.size.w - width) / 2;
   } else if (config.location == WIDGET_LOCATION_RIGHT) {
     left = bounds.size.w - width;
   }
-  const GRect widget_bounds = GRect(left, 0, width, watchface_bar_height());
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget rect: (%d, %d, %d, %d)", widget_bounds.origin.x, widget_bounds.origin.y, widget_bounds.size.w, widget_bounds.size.h);
-  layer_set_frame(widget->layer, widget_bounds);
+  widget->bounds = GRect(bounds.origin.x + left, bounds.origin.y, width, watchface_bar_height());
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget rect: (%d, %d, %d, %d)", widget->bounds.origin.x, widget->bounds.origin.y, widget->bounds.size.w, widget->bounds.size.h);
   // Recalculate text bounds
-  widget->data->text_bounds = widget_get_text_bounds(widget);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget text rect: (%d, %d, %d, %d)", widget->data->text_bounds.origin.x, widget->data->text_bounds.origin.y, widget->data->text_bounds.size.w, widget->data->text_bounds.size.h);
-  // Update widget layer bounds
-  if (config.type == ELEMENT_NONE) {
-    layer_set_hidden(widget->layer, true);
-  } else {
-    layer_set_hidden(widget->layer, false);
-  }
+  widget->text_bounds = widget_get_text_bounds(widget);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget text rect: (%d, %d, %d, %d)", widget->text_bounds.origin.x, widget->text_bounds.origin.y, widget->text_bounds.size.w, widget->text_bounds.size.h);
 }
 
 void widget_unload(Widget *widget) {
-  if (widget->data->icon_pdc != NULL) {
-    gdraw_command_image_destroy(widget->data->icon_pdc);
-    widget->data->icon_pdc = NULL;
+  if (widget->icon_pdc != NULL) {
+    gdraw_command_image_destroy(widget->icon_pdc);
+    widget->icon_pdc = NULL;
   }
-  layer_destroy(widget->layer);
+}
+
+void widget_update_layer(Widget* widget, Layer *layer, GContext *ctx) {
+  if (widget->config.type == ELEMENT_NONE) {
+    return;
+  }
+  if (!widget->redraw_due) {
+    return;
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "widget_update_layer: %d, %d", widget->config.bar, widget->config.location);
+  widget->redraw_due = false;
+  GColor text_color = widget->config.color_primary;
+  // Draw background and accents
+  if (widget->config.location == WIDGET_LOCATION_CENTER) {
+    #ifdef PBL_COLOR
+    graphics_context_set_fill_color(ctx, widget->config.color_accent);
+    #else
+    text_color = widget->config.color_secondary;
+    graphics_context_set_fill_color(ctx, widget->config.color_primary);
+    #endif
+    graphics_fill_rect(ctx, widget->bounds, 0, GCornerNone);
+  } else {
+    graphics_context_set_fill_color(ctx, widget->config.color_secondary);
+    graphics_fill_rect(ctx, widget->bounds, 0, GCornerNone);
+    #ifdef PBL_COLOR
+    graphics_context_set_fill_color(ctx, widget->config.color_accent);
+    #else
+    graphics_context_set_fill_color(ctx, widget->config.color_primary);
+    #endif
+    const int16_t accent_height = watchface_accent_height();
+    if (widget->config.bar == BAR_LOCATION_TOP) {
+      graphics_fill_rect(ctx, widget_rect(widget, 0, widget->bounds.size.h - accent_height, widget->bounds.size.w, accent_height), 0, GCornerNone);
+    } else {
+      graphics_fill_rect(ctx, widget_rect(widget, 0, 0, widget->bounds.size.w, accent_height), 0, GCornerNone);
+    }
+  }
+  // Draw text
+  FFont* font = watchface_bar_ffont();
+  if (font != NULL) {
+    GRect text_bounds = layer_convert_rect_to_screen(layer, widget->text_bounds);
+    text_render_fit(ctx, text_bounds, widget->buffer, font, text_color, GTextAlignmentCenter);
+  } else {
+    // Fallback if loading font fails (low memory devices)
+    const GFont font = fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21);
+    graphics_context_set_text_color(ctx, text_color);
+    graphics_draw_text(ctx, widget->buffer, font, widget->text_bounds, GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  }
+  // Draw weather icons
+  if (widget->icon_pdc != NULL) {
+    const int16_t icon_size = widget_get_icon_size();
+    GPoint icon_pos = GPoint(
+      widget->bounds.origin.x + (widget->bounds.size.w - icon_size) / 2, 
+      widget->bounds.origin.y + (widget->bounds.size.h - icon_size) / 2
+    );
+    switch (widget->config.location) {
+      case WIDGET_LOCATION_LEFT:
+        icon_pos.x = widget->bounds.origin.x + widget->text_bounds.origin.x + widget->text_bounds.size.w;
+        break;
+      case WIDGET_LOCATION_RIGHT:
+        icon_pos.x = widget->bounds.origin.x + widget->text_bounds.origin.x - icon_size;
+        break;
+      default:
+        break;
+    }
+    gdraw_command_image_draw(ctx, widget->icon_pdc, icon_pos);
+  }
 }
 
 void widget_update_any(Widget *widget) {
@@ -363,7 +363,7 @@ void widget_update_battery(Widget *widget, BatteryChargeState charge) {
   if (!widget_is_battery(widget)) {
     return;
   }
-  switch (widget->data->config.type) {
+  switch (widget->config.type) {
     case ELEMENT_BATTERY:
       snprintf(widget_temp, sizeof(widget_temp), "%d", charge.charge_percent);
       break;
@@ -377,7 +377,7 @@ void widget_update_health(Widget *widget, HealthEventType event, void *context) 
   if (!widget_is_health(widget)) {
     return;
   }
-  switch (widget->data->config.type) {
+  switch (widget->config.type) {
     case ELEMENT_HEART_RATE:
 #if defined(PBL_HEALTH)
       {
@@ -401,10 +401,10 @@ void widget_update_weather(Widget *widget) {
   }
   WeatherData *w = weather_get();
   widget_temp_icon = UINT32_MAX;
-  switch (widget->data->config.type) {
+  switch (widget->config.type) {
     case ELEMENT_WEATHER_CURRENT:
       if (w->currentCondition > -1) {
-        widget_temp_icon = widget_weather_icon_for_color(w->currentCondition, widget->data->config.color_primary);
+        widget_temp_icon = widget_weather_icon_for_color(w->currentCondition, widget->config.color_primary);
         snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->currentTemp);
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
@@ -412,7 +412,7 @@ void widget_update_weather(Widget *widget) {
       break;
     case ELEMENT_WEATHER_TODAY:
       if (w->todaysCondition > -1) {
-        widget_temp_icon = widget_weather_icon_for_color(w->todaysCondition, widget->data->config.color_primary);
+        widget_temp_icon = widget_weather_icon_for_color(w->todaysCondition, widget->config.color_primary);
         snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->todaysMaxTemp);
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
@@ -427,7 +427,7 @@ void widget_update_weather(Widget *widget) {
       break;
     case ELEMENT_WEATHER_TOMORROW:
       if (w->tomorrowsCondition > -1) {
-        widget_temp_icon = widget_weather_icon_for_color(w->tomorrowsCondition, widget->data->config.color_primary);
+        widget_temp_icon = widget_weather_icon_for_color(w->tomorrowsCondition, widget->config.color_primary);
         snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->tomorrowsMaxTemp);
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
@@ -451,7 +451,7 @@ void widget_update_time(Widget *widget, struct tm *t, TimeUnits units_changed) {
   if (!widget_is_time(widget)) {
     return;
   }
-  switch (widget->data->config.type) {
+  switch (widget->config.type) {
     case ELEMENT_DAY_OF_MONTH:
       if (units_changed || DAY_UNIT == 0) {
         return;
@@ -487,5 +487,10 @@ void widget_update_time(Widget *widget, struct tm *t, TimeUnits units_changed) {
 
 void widget_refresh(Widget *widget) {
   widget_update_any(widget);
-  layer_mark_dirty(widget->layer);
+  widget_redraw(widget);
+}
+
+void widget_redraw(Widget *widget) {
+  widget->redraw_due = true;
+  watchface_redraw();
 }

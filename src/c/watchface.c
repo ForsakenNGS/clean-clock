@@ -19,6 +19,13 @@ static void watchface_inbox_dropped(AppMessageResult reason, void *context) {
   APP_LOG(APP_LOG_LEVEL_WARNING, "Inbox dropped: %d", (int)reason);
 }
 
+static void watchface_update_layer(Layer *layer, GContext *ctx) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "watchface_update_layer");
+  bar_update_layer(&s_watchface.top, layer, ctx);
+  time_update_layer(&s_watchface.time, layer, ctx);
+  bar_update_layer(&s_watchface.bottom, layer, ctx);
+}
+
 void watchface_init(void) {
   s_window = window_create();
   s_watchface.bar_ffont = NULL;
@@ -59,7 +66,8 @@ void watchface_load(Window *window) {
   const GColor color_accent = watchface_color(s->time_accent_color);
   time_load(&s_watchface.time, s_watchface.root_layer, time_config(color_primary, color_secondary, color_accent, s->time_font));
   bar_load(&s_watchface.bottom, s_watchface.root_layer, BAR_LOCATION_BOTTOM, s->bottom);
-  window_set_background_color(window, s_watchface.time.data->config.color_secondary);
+  window_set_background_color(window, s_watchface.time.config.color_secondary);
+  layer_set_update_proc(s_watchface.root_layer, watchface_update_layer);
   watchface_apply_subscriptions();
   watchface_refresh();
 }
@@ -88,6 +96,9 @@ void watchface_refresh(void) {
   bar_refresh(&s_watchface.top);
   time_refresh(&s_watchface.time);
   bar_refresh(&s_watchface.bottom);
+}
+
+void watchface_redraw(void) {
   layer_mark_dirty(s_watchface.root_layer);
 }
 
@@ -141,9 +152,9 @@ TimeUnits watchface_update_time_units() {
 }
 
 bool watchface_has_element_of_type(const ElementType type) {
-  if ((s_watchface.top.left.data->config.type == type) || (s_watchface.top.center.data->config.type == type) || 
-    (s_watchface.top.right.data->config.type == type) || (s_watchface.bottom.left.data->config.type == type) || 
-    (s_watchface.bottom.center.data->config.type == type) || (s_watchface.bottom.right.data->config.type == type))
+  if ((s_watchface.top.left.config.type == type) || (s_watchface.top.center.config.type == type) || 
+    (s_watchface.top.right.config.type == type) || (s_watchface.bottom.left.config.type == type) || 
+    (s_watchface.bottom.center.config.type == type) || (s_watchface.bottom.right.config.type == type))
   {
     return true;
   } else {

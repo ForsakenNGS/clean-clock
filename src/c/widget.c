@@ -162,7 +162,6 @@ uint32_t widget_weather_icon_for_color(int condition, GColor color_primary) {
   // GColorBlack has alpha 0b11 and RGB all 0; GColorWhite has alpha 0b11 and RGB
   // all 1. Compare the RGB portion to decide whether the primary color is dark.
   bool is_dark = (color_primary.argb & 0x3F) == 0;
-
   switch (condition) {
     case 0: // Clear day
     case 1: // Clear night
@@ -334,10 +333,10 @@ void widget_update_layer(Widget* widget, Layer *layer, GContext *ctx) {
     );
     switch (widget->config.location) {
       case WIDGET_LOCATION_LEFT:
-        icon_pos.x = widget->bounds.origin.x + widget->text_bounds.origin.x + widget->text_bounds.size.w;
+        icon_pos.x = widget->text_bounds.origin.x + widget->text_bounds.size.w;
         break;
       case WIDGET_LOCATION_RIGHT:
-        icon_pos.x = widget->bounds.origin.x + widget->text_bounds.origin.x - icon_size;
+        icon_pos.x = widget->text_bounds.origin.x - icon_size;
         break;
       default:
         break;

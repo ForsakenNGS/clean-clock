@@ -252,8 +252,8 @@ void widget_load(Widget *widget, const GRect bounds, const WidgetConfig config, 
 }
 
 void widget_load_settings(Widget *widget, const GRect bounds, const WidgetConfig config, const int16_t width) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget type: %d", config.type);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget width: %d", width);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget type: %d", config.type);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget width: %d", width);
   // Update config
   widget->icon = UINT32_MAX; // UINT32_MAX -> no icon
   widget->icon_pdc = NULL;
@@ -266,10 +266,10 @@ void widget_load_settings(Widget *widget, const GRect bounds, const WidgetConfig
     left = bounds.size.w - width;
   }
   widget->bounds = GRect(bounds.origin.x + left, bounds.origin.y, width, watchface_bar_height());
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget rect: (%d, %d, %d, %d)", widget->bounds.origin.x, widget->bounds.origin.y, widget->bounds.size.w, widget->bounds.size.h);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget rect: (%d, %d, %d, %d)", widget->bounds.origin.x, widget->bounds.origin.y, widget->bounds.size.w, widget->bounds.size.h);
   // Recalculate text bounds
   widget->text_bounds = widget_get_text_bounds(widget);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget text rect: (%d, %d, %d, %d)", widget->text_bounds.origin.x, widget->text_bounds.origin.y, widget->text_bounds.size.w, widget->text_bounds.size.h);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Widget text rect: (%d, %d, %d, %d)", widget->text_bounds.origin.x, widget->text_bounds.origin.y, widget->text_bounds.size.w, widget->text_bounds.size.h);
 }
 
 void widget_unload(Widget *widget) {
@@ -286,7 +286,7 @@ void widget_update_layer(Widget* widget, Layer *layer, GContext *ctx) {
   if (!widget->redraw_due) {
     return;
   }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "widget_update_layer: %d, %d", widget->config.bar, widget->config.location);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "widget_update_layer: %d, %d", widget->config.bar, widget->config.location);
   widget->redraw_due = false;
   GColor text_color = widget->config.color_primary;
   // Draw background and accents

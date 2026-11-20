@@ -1,5 +1,8 @@
 #include "text.h"
 
+/**
+ * Calculate the largest font size to fit the given text into the given bounds.
+ */
 void text_render_fit(GContext *ctx, GRect bounds, char* text, FFont* font, GColor color, GTextAlignment alignment) {
   FContext fctx;
   fctx_init_context(&fctx, ctx);

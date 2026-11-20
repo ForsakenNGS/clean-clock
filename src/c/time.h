@@ -12,7 +12,8 @@ typedef struct {
 } TimeConfig;
 
 typedef struct {
-  bool redraw_due;
+  bool redraw_full;
+  bool redraw_text;
   GRect bounds;
   char buffer[8];
   FFont *font;
@@ -27,4 +28,4 @@ void time_load_font(TimeSection *section, const uint32_t resource_id);
 void time_unload(TimeSection *section);
 void time_update(TimeSection *section, struct tm *tick_time, TimeUnits units_changed);
 void time_update_layer(TimeSection *section, Layer *layer, GContext *ctx);
-void time_refresh(TimeSection *section);
+void time_refresh(TimeSection *section, bool full_refresh);

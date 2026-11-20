@@ -11,7 +11,7 @@ void bar_load(BarSection *section, Layer *root_layer, const BarLocation location
   } else {
     section->bounds = GRect(0, bounds.size.h - watchface_bar_height(), bounds.size.w, watchface_bar_height());
   }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Bar colors: (#%06X, #%06X, #%06X)", bs.primary_color, bs.secondary_color, bs.accent_color);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Bar colors: (#%06X, #%06X, #%06X)", bs.primary_color, bs.secondary_color, bs.accent_color);
   const GColor color_primary = watchface_color(bs.primary_color);
   const GColor color_secondary = watchface_color(bs.secondary_color);
   const GColor color_accent = watchface_color(bs.accent_color);

@@ -24,13 +24,13 @@ GRect time_rect(TimeSection *section, int16_t x, int16_t y, int16_t w, int16_t h
 void time_load(TimeSection *section, Layer *root_layer, const TimeConfig config) {
   GRect bounds = layer_get_bounds(root_layer);
   // Create time segment
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Time rect: (%d, %d, %d, %d)", 0, watchface_bar_height(), bounds.size.w, watchface_time_height());
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Time rect: (%d, %d, %d, %d)", 0, watchface_bar_height(), bounds.size.w, watchface_time_height());
   section->bounds = GRect(0, watchface_bar_height(), bounds.size.w, watchface_time_height());
   time_load_settings(section, config);
 }
 
 void time_load_settings(TimeSection *section, const TimeConfig config) {
-  section->redraw_due = true;
+  section->redraw_text = true;
   section->config = config;
   if (config.font == TIME_FONT_BEBAS) {
     time_load_font(section, RESOURCE_ID_BEBAS);
@@ -68,41 +68,55 @@ void time_update(TimeSection *section, struct tm *tick_time, TimeUnits units_cha
   }
   if (strcmp(section->buffer, time_temp) != 0) {
     strncpy(section->buffer, time_temp, sizeof(section->buffer));
-    time_refresh(section);
+    time_refresh(section, false);
   }
 }
 
 void time_update_layer(TimeSection *section, Layer *layer, GContext *ctx) {
-  if (!section->redraw_due) {
+  if (!section->redraw_full && !section->redraw_text) {
     return;
   }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "time_update_layer");
-  section->redraw_due = false;
-  GRect bounds = section->bounds;
-  const uint16_t px = 4;
-  const uint16_t py = 4;
-  const uint16_t left = px;
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "time_update_layer");
+  section->redraw_text = false;
+  const GRect bounds = section->bounds;
+  const uint16_t px = 4; // Horizontal text padding
+  const uint16_t py = 8; // Vertical text padding
   const uint16_t width = bounds.size.w - px * 2;
-  // Render background
-  graphics_context_set_fill_color(ctx, section->config.color_secondary);
-  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-  // Render accent lines
-  const uint16_t accent_height = watchface_accent_height();
-  const GRect accent_top = time_rect(section, left, py - accent_height, width, accent_height);
-  const GRect accent_bottom = time_rect(section, left, bounds.size.h - py, width, accent_height);
-  graphics_context_set_fill_color(ctx, section->config.color_accent);
-  graphics_fill_rect(ctx, accent_top, 0, GCornerNone);
-  graphics_fill_rect(ctx, accent_bottom, 0, GCornerNone);
+  const GRect text_bounds = time_rect(section, px, py, width, bounds.size.h - py * 2);
+  if (section->redraw_full) {
+    // Full redraw -> Fill the whole time area and redraw accents as well
+    section->redraw_full = false;
+    // Render background
+    graphics_context_set_fill_color(ctx, section->config.color_secondary);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+    // Render accent lines
+    const uint16_t apx = 4; // Horizontal accent padding
+    const uint16_t apy = 4; // Vertical accent padding
+    const uint16_t accent_height = watchface_accent_height();
+    const uint16_t accent_width = bounds.size.w - apx * 2;
+    const GRect accent_top = time_rect(section, apx, apy - accent_height, accent_width, accent_height);
+    const GRect accent_bottom = time_rect(section, apx, bounds.size.h - apy, accent_width, accent_height);
+    graphics_context_set_fill_color(ctx, section->config.color_accent);
+    graphics_fill_rect(ctx, accent_top, 0, GCornerNone);
+    graphics_fill_rect(ctx, accent_bottom, 0, GCornerNone);
+  } else {
+    // Partial redraw -> Just fill the previous text area and redraw that
+    graphics_context_set_fill_color(ctx, section->config.color_secondary);
+    graphics_fill_rect(ctx, text_bounds, 0, GCornerNone);
+  }
   // Render text
   if (section->font) {
-    GRect text_bounds = time_rect(section, left, py, width, bounds.size.h - py * 2);
     text_render_fit(ctx, text_bounds, section->buffer, section->font, section->config.color_primary, GTextAlignmentCenter);
   } else {
     // TODO: Implement fallback using system font
   }
 }
 
-void time_refresh(TimeSection *section) {
-  section->redraw_due = true;
+void time_refresh(TimeSection *section, bool full_refresh) {
+  if (full_refresh) {
+    section->redraw_full = true;
+  } else {
+    section->redraw_text = true;
+  }
   watchface_redraw();
 }

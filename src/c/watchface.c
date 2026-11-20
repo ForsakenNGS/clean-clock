@@ -20,7 +20,7 @@ static void watchface_inbox_dropped(AppMessageResult reason, void *context) {
 }
 
 static void watchface_update_layer(Layer *layer, GContext *ctx) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "watchface_update_layer");
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "watchface_update_layer");
   bar_update_layer(&s_watchface.top, layer, ctx);
   time_update_layer(&s_watchface.time, layer, ctx);
   bar_update_layer(&s_watchface.bottom, layer, ctx);
@@ -73,7 +73,7 @@ void watchface_load(Window *window) {
 }
 
 void watchface_load_settings(void) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Settings update");
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Settings update");
   ClaySettings *s = settings_get();
   bar_load_settings(&s_watchface.top, s->top);
   const GColor color_primary = watchface_color(s->time_primary_color);
@@ -94,7 +94,7 @@ void watchface_unload(Window *window) {
 
 void watchface_refresh(void) {
   bar_refresh(&s_watchface.top);
-  time_refresh(&s_watchface.time);
+  time_refresh(&s_watchface.time, true);
   bar_refresh(&s_watchface.bottom);
 }
 
@@ -103,7 +103,7 @@ void watchface_redraw(void) {
 }
 
 static void watchface_update_battery(BatteryChargeState charge) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Battery update (%d%%)", charge.charge_percent);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Battery update (%d%%)", charge.charge_percent);
   widget_update_battery(&s_watchface.top.left, charge);
   widget_update_battery(&s_watchface.top.center, charge);
   widget_update_battery(&s_watchface.top.right, charge);
@@ -113,7 +113,7 @@ static void watchface_update_battery(BatteryChargeState charge) {
 }
 
 static void watchface_update_health(HealthEventType event, void *context) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Health update (%d)", event);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Health update (%d)", event);
   widget_update_health(&s_watchface.top.left, event, context);
   widget_update_health(&s_watchface.top.center, event, context);
   widget_update_health(&s_watchface.top.right, event, context);
@@ -123,7 +123,7 @@ static void watchface_update_health(HealthEventType event, void *context) {
 }
 
 static void watchface_update_time(struct tm *t, TimeUnits units_changed) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Time update (%d)", units_changed);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Time update (%d)", units_changed);
   time_update(&s_watchface.time, t, units_changed);
   widget_update_time(&s_watchface.top.left, t, units_changed);
   widget_update_time(&s_watchface.top.center, t, units_changed);
@@ -134,7 +134,7 @@ static void watchface_update_time(struct tm *t, TimeUnits units_changed) {
 }
 
 void watchface_update_weather(void) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Weather update");
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Weather update");
   widget_update_weather(&s_watchface.top.left);
   widget_update_weather(&s_watchface.top.center);
   widget_update_weather(&s_watchface.top.right);

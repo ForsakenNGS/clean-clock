@@ -103,6 +103,7 @@ void settings_handle_inbox(DictionaryIterator *iter, void *context) {
       s_settings.temp_unit = TEMP_UNIT_C;
     }
     config_changed = true;
+    weather_changed = true;
   }
   // Language
   t = dict_find(iter, MESSAGE_KEY_LANGUAGE);

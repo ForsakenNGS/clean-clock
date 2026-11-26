@@ -12,6 +12,15 @@ static const char *widget_weekday(int wday) {
   return names[wday % 7];
 }
 
+// Convert a temperature stored in Celsius to the configured unit.
+static int widget_temp_to_unit(int temp_c) {
+  ClaySettings *s = settings_get();
+  if (s->temp_unit == TEMP_UNIT_F) {
+    return (int)(temp_c * 9.0 / 5.0 + 32.0);
+  }
+  return temp_c;
+}
+
 static const char *widget_month(int mon) {
   static const char *names[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
   return names[mon % 12];
@@ -404,7 +413,7 @@ void widget_update_weather(Widget *widget) {
     case ELEMENT_WEATHER_CURRENT:
       if (w->currentCondition > -1) {
         widget_temp_icon = widget_weather_icon_for_color(w->currentCondition, widget->config.color_primary);
-        snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->currentTemp);
+        snprintf(widget_temp, sizeof(widget_temp), "%d°", widget_temp_to_unit(w->currentTemp));
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
       }
@@ -412,14 +421,14 @@ void widget_update_weather(Widget *widget) {
     case ELEMENT_WEATHER_TODAY:
       if (w->todaysCondition > -1) {
         widget_temp_icon = widget_weather_icon_for_color(w->todaysCondition, widget->config.color_primary);
-        snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->todaysMaxTemp);
+        snprintf(widget_temp, sizeof(widget_temp), "%d°", widget_temp_to_unit(w->todaysMaxTemp));
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
       }
       break;
     case ELEMENT_WEATHER_TODAY_MIN_MAX:
       if (w->todaysCondition > -1) {
-        snprintf(widget_temp, sizeof(widget_temp), "%d/%d°", (int)w->tomorrowsMinTemp, (int)w->tomorrowsMaxTemp);
+        snprintf(widget_temp, sizeof(widget_temp), "%d/%d°", widget_temp_to_unit(w->tomorrowsMinTemp), widget_temp_to_unit(w->tomorrowsMaxTemp));
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--/--");
       }
@@ -427,14 +436,14 @@ void widget_update_weather(Widget *widget) {
     case ELEMENT_WEATHER_TOMORROW:
       if (w->tomorrowsCondition > -1) {
         widget_temp_icon = widget_weather_icon_for_color(w->tomorrowsCondition, widget->config.color_primary);
-        snprintf(widget_temp, sizeof(widget_temp), "%d°", (int)w->tomorrowsMaxTemp);
+        snprintf(widget_temp, sizeof(widget_temp), "%d°", widget_temp_to_unit(w->tomorrowsMaxTemp));
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--°");
       }
       break;
     case ELEMENT_WEATHER_TOMORROW_MIN_MAX:
       if (w->tomorrowsCondition > -1) {
-        snprintf(widget_temp, sizeof(widget_temp), "%d/%d°", (int)w->todaysMinTemp, (int)w->todaysMaxTemp);
+        snprintf(widget_temp, sizeof(widget_temp), "%d/%d°", widget_temp_to_unit(w->todaysMinTemp), widget_temp_to_unit(w->todaysMaxTemp));
       } else {
         snprintf(widget_temp, sizeof(widget_temp), "--/--");
       }
